@@ -26,14 +26,14 @@ const leftPaddle = {
     velocity: 2 // speed of paddle movement
 }
 
-// right paddle (computer paddle)
+// right paddle (computer paddle) 
 const computerPaddle = {
     color: 'white',
     width: 10,
     height: 90,
     paddlePositionX: board.width - 20, // x position of right paddle. The reason why it is 20 is because the right edge of the canvas is the ending point (edge) of the canvas.
     paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2)
-    velocity: 50
+    velocity: 2
 }
 
 // draw the ball
@@ -84,17 +84,19 @@ function moveComputerPaddle() { // Move the right paddle (computer paddle)
 // function to start the game
 function startGame() {
     if (gameInterval) clearInterval(gameInterval) // clear any existing interval
-    resetGame() // reset scores and positions before starting the game
-    gameInterval = setInterval(() => {
+    resetGame()
+    gameInterval = setInterval(function () { // the ball is able to 
         drawBoard()
         moveBall()
-        moveComputerPaddle() // Move the computer's paddle
+        moveComputerPaddle()
         increaseScore()
         checkCollisions()
-        checkWin() // Check if player has won
-        checkLose() // Check if player has lost
+        checkWin()
+        checkLose()
     }, 1000 / 70) // 70 fps
 }
+//the ball is able to 
+
 
 
 //function to reset the game
@@ -126,40 +128,44 @@ function increaseScore() {
 // Ball and top/bottom boundaries
 function checkCollisions() {
     if (ball.ballY - ball.radius <= 0 || ball.ballY + ball.radius >= board.height) {
-        ball.velocityY = -ball.velocityY
+        ball.velocityY = - ball.velocityY
     }
 
     // Ball and left/right boundaries
-    if (ball.ballX - ball.radius <= 0 || ball.ballX + ball.radius >= board.width) {
-        // Update scores
-        if (ball.ballX - ball.radius <= 0) {
-            computerScore++
-        } else if (ball.ballX + ball.radius >= board.width) {
-            playerScore++
-        }
-        // Reset ball to the center
-        ball.ballX = board.width / 2
-        ball.ballY = board.height / 2
-        ball.velocityX = -ball.velocityX
-    }
+    // if (ball.ballX - ball.radius <= 0 || ball.ballX + ball.radius >= board.width) {
+    //     // Update scores
+    //     if (ball.ballX - ball.radius <= 0) {
+    //         computerScore++
+    //     } else if (ball.ballX + ball.radius >= board.width) {
+    //         playerScore++
+    //     }
+    //     // Reset ball to the center
+    //     ball.ballX = board.width / 2
+    //     ball.ballY = board.height / 2
+    //     ball.velocityX = -ball.velocityX
+    // }
 
     // statement to check if the ball hits the left paddle or the right paddle (computer paddle)
-    if ((ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
+    const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
         ball.ballY >= leftPaddle.paddlePositionY &&
-        ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height) ||
-        (ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
-            ball.ballY >= computerPaddle.paddlePositionY &&
-            ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height)) {
-        ball.velocityX = -ball.velocityX
+        ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height
+
+    const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
+        ball.ballY >= computerPaddle.paddlePositionY &&
+        ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height
+
+    if (ballHitLeftPaddle || ballHitComputerPaddle) {
+        ball.velocityX = -ball.velocityX // reverses the direction of the ball
     }
+
 }
 
 // moves the computer paddle based on the position of the ball on the y axis
 function moveComputerPaddle() {
-    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) {
-        computerPaddle.velocity = -3
+    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { // checks if the ball is above the center of the paddle
+        computerPaddle.velocity = -2
     } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) {
-        computerPaddle.velocity = 3
+        computerPaddle.velocity = 2
     } else {
         computerPaddle.velocity = 0
     }

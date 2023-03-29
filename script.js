@@ -23,7 +23,7 @@ const leftPaddle = {
     height: 90, // height of paddle
     paddlePositionX: 10, // x position of left paddle. The reason why it is 10 is because the left edge of the canvas is the starting point (edge)of the canvas.
     paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2) 
-    velocity: 3 // speed of paddle movement
+    velocity: 2 // speed of paddle movement
 }
 
 // right paddle (computer paddle)
@@ -33,10 +33,10 @@ const computerPaddle = {
     height: 90,
     paddlePositionX: board.width - 20, // x position of right paddle. The reason why it is 20 is because the right edge of the canvas is the ending point (edge) of the canvas.
     paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2)
-    velocity: 3
+    velocity: 50
 }
 
-//function to draw the ball
+// draw the ball
 function drawBall() {
     context.beginPath() //start drawing
     context.fillStyle = ball.color //set color of ball
@@ -45,7 +45,7 @@ function drawBall() {
     context.closePath() //end drawing
 }
 
-//function to draw the left paddle
+//draw the left paddle
 function drawLeftPaddle() {
     context.beginPath() //start drawing
     context.fillStyle = leftPaddle.color //set color of paddle
@@ -53,7 +53,7 @@ function drawLeftPaddle() {
     context.closePath() //end drawing
 }
 
-//function to draw the computer paddle (right)
+//draw the computer paddle (right)
 function drawComputerPaddle() {
     context.beginPath()
     context.fillStyle = computerPaddle.color
@@ -75,29 +75,25 @@ function moveBall() {
     ball.ballY += ball.velocityY //move ball in y direction. updates the position of the ball's velocity
 }
 
-//function to move the left paddle
-// function moveLeftPaddle() {
-//     leftPaddle.paddlePositionY += leftPaddle.velocity //move paddle in y direction. the += updates the position of the paddle's velocity
-// }
-
 //function to move the computer paddle
 function moveComputerPaddle() { // Move the right paddle (computer paddle) 
     computerPaddle.paddlePositionY += computerPaddle.velocity
 }
 
-//function to start the game
-function startGame() {
 
+// function to start the game
+function startGame() {
     if (gameInterval) clearInterval(gameInterval) // clear any existing interval
     resetGame() // reset scores and positions before starting the game
     gameInterval = setInterval(() => {
         drawBoard()
         moveBall()
-        moveComputerPaddle()// Move the computer's paddle
+        moveComputerPaddle() // Move the computer's paddle
         increaseScore()
         checkCollisions()
-        gameOver()
-    }, 1000 / 60) // 60 fps
+        checkWin() // Check if player has won
+        checkLose() // Check if player has lost
+    }, 1000 / 70) // 70 fps
 }
 
 
@@ -106,21 +102,16 @@ function resetGame() {
     clearInterval(gameInterval) //to stop the game from running over and over again when the game is reset
     ball.ballX = board.width / 2
     ball.ballY = board.height / 2
-    ball.velocityX = 3
-    ball.velocityY = 3
-    leftPaddle.paddlePositionY = board.height / 2 - 35
-    computerPaddle.paddlePositionY = board.height / 2 - 35
-
+    ball.velocityX = 2
+    ball.velocityY = 2
+    leftPaddle.paddlePositionY = board.height / 2 - 45
+    computerPaddle.paddlePositionY = board.height / 2 - 45
+    playerScore = 0
+    computerScore = 0
 }
 
-function gameOver() {
-    if (playerScore === 3) {
-        document.querySelector('.win-or-lose').textContent = 'You win!'
-    } else if (computerScore === 3) {
-        document.querySelector('.win-or-lose').textContent = 'Computer wins!'
-    }
-}
 
+//function to increase score
 function increaseScore() {
     if (ball.ballX - ball.radius < 0) {
         computerScore++
@@ -129,9 +120,7 @@ function increaseScore() {
     } else if (ball.ballX + ball.radius > board.width) {
         playerScore++
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`
-
     }
-
 }
 
 // Ball and top/bottom boundaries
@@ -139,6 +128,7 @@ function checkCollisions() {
     if (ball.ballY - ball.radius <= 0 || ball.ballY + ball.radius >= board.height) {
         ball.velocityY = -ball.velocityY
     }
+
     // Ball and left/right boundaries
     if (ball.ballX - ball.radius <= 0 || ball.ballX + ball.radius >= board.width) {
         // Update scores
@@ -153,20 +143,19 @@ function checkCollisions() {
         ball.velocityX = -ball.velocityX
     }
 
-    // Ball and paddles
-    if (
-        (ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
-            ball.ballY >= leftPaddle.paddlePositionY &&
-            ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height) ||
+    // statement to check if the ball hits the left paddle or the right paddle (computer paddle)
+    if ((ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
+        ball.ballY >= leftPaddle.paddlePositionY &&
+        ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height) ||
         (ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
             ball.ballY >= computerPaddle.paddlePositionY &&
-            ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height)
-    ) {
+            ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height)) {
         ball.velocityX = -ball.velocityX
     }
 }
 
-function moveComputerPaddle() { // Move the computer's paddle
+// moves the computer paddle based on the position of the ball on the y axis
+function moveComputerPaddle() {
     if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) {
         computerPaddle.velocity = -3
     } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) {
@@ -184,6 +173,21 @@ let playerScore = 0
 let computerScore = 0
 const maxLevel = 5
 let gameInterval = null // it's null to make sure the game doesn't start automatically
+let increaseBallSpeed = 1.05 // increase the speed of the ball by 5% every time it hits the paddle
+
+function ifWin() {
+    if (playerScore === maxLevel) {
+        document.querySelector('.win-or-lose').textContent = 'You win!'
+        clearInterval(gameInterval)
+    }
+}
+
+function ifLose() {
+    if (computerScore === maxLevel) {
+        document.querySelector('.win-or-lose').textContent = 'Computer wins!'
+        clearInterval(gameInterval)
+    }
+}
 
 //event listeners
 const startButton = document.querySelector('#startbtn').addEventListener('click', () => {
@@ -199,10 +203,8 @@ document.addEventListener('mousemove', event => {
 })
 
 
-//call functions. call functions makes sure the functions are executed
-
+//call functions
 drawBall()
 drawLeftPaddle()
 drawComputerPaddle()
-// moveLeftPaddle() // no longer needed sinece the left paddle is controlled by the mouse
-
+// moveLeftPaddle() // no longer needed sinece the left paddle is controlled by the mouse (aka the user)

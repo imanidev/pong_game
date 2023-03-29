@@ -22,19 +22,20 @@ const leftPaddle = {
     width: 10, // width of paddle
     height: 90, // height of paddle
     paddlePositionX: 10, // x position of left paddle. The reason why it is 0 is because the left edge of the canvas is the starting point (edge)of the canvas.
-    paddlePositionY: board.height / 2 - 35, // 35 is half of the height of the paddle (70/2) 
+    paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2) 
     velocity: 3 // speed of paddle movement
 }
 
-//right paddle object
-const rightPaddle = {
+// right paddle (computer paddle)
+const computerPaddle = { 
     color: 'white',
-    width: 10, // width of paddle
-    height: 90, // height of paddle
-    paddlePositionX: board.width - 20, // x position of right paddle. to position it at the end of the canvas, we subtract the width of the paddle from the width of the canvas (600 - 10) this is to make sure the right paddle is not outside the canvas and is positioned at the end of the canvas the 10 can be seen as a buffer or padding
-    paddlePositionY: board.height / 2 - 35, // 35 is half of the height of the paddle (70/2)
-    velocity: 3 // speed of paddle movement
-}
+    width: 10,
+    height: 90,
+    paddlePositionX: board.width - 20,
+    paddlePositionY: board.height / 2 - 45,
+    velocity: 3
+};
+
 
 //function to draw the ball
 function drawBall() {
@@ -53,12 +54,13 @@ function drawLeftPaddle() {
     context.closePath() //end drawing
 }
 
-//function to draw the right paddle
-function drawRightPaddle() {
-    context.beginPath() //start drawing
-    context.fillStyle = rightPaddle.color //set color of paddle
-    context.fillRect(rightPaddle.paddlePositionX, rightPaddle.paddlePositionY, rightPaddle.width, rightPaddle.height) //draw paddle
-    context.closePath() //end drawing
+
+//function to draw the computer paddle (right)
+function drawComputerPaddle() {
+    context.beginPath();
+    context.fillStyle = computerPaddle.color;
+    context.fillRect(computerPaddle.paddlePositionX, computerPaddle.paddlePositionY, computerPaddle.width, computerPaddle.height);
+    context.closePath();
 }
 
 //function to draw the board
@@ -66,7 +68,7 @@ function drawBoard() {
     context.clearRect(0, 0, board.width, board.height) //clear board
     drawBall() //draw ball
     drawLeftPaddle() //draw left paddle
-    drawRightPaddle() //draw right paddle
+    drawComputerPaddle() //draw right paddle
 }
 
 //function to move the ball
@@ -80,33 +82,34 @@ function moveLeftPaddle() {
     leftPaddle.paddlePositionY += leftPaddle.velocity //move paddle in y direction. the += updates the position of the paddle based on the velocity . If you use =, the paddle will not move
 }
 
-//function to move the right paddle
-function moveRightPaddle() {
-    rightPaddle.paddlePositionY += rightPaddle.velocity //move paddle in y direction. the += updates the position of the paddle based on the velocity. If you use =, the paddle will not move
+
+function moveComputerPaddle() { // Move the right paddle (computer paddle) 
+    computerPaddle.paddlePositionY += computerPaddle.velocity;
 }
-// variables to keep track of score and levels of the game
-let startLevel = 1
-let playerOneScore = 0
-let playerTwoScore = 0
-const maxLevel = 5
+
 
 //function to start the game
 function startGame() {
-    if (startLevel === 1) {
-        ball.velocityX = 3
-        ball.velocityY = 3
-    } else if (startLevel === 2) {
-        ball.velocityX = 4
-        ball.velocityY = 4
-    } else if (startLevel === 3) {
-        ball.velocityX = 5
-        ball.velocityY = 5
-    } else if (startLevel === 4) {
-        ball.velocityX = 6
-        ball.velocityY = 6
-    } else if (startLevel === 5) {
-        ball.velocityX = 7
-        ball.velocityY = 7
+    let gameInterval = 0
+    if (gameInterval) clearInterval(gameInterval); // clear any existing interval
+    resetGame(); // reset scores and positions before starting the game
+    gameInterval = setInterval(() => {
+        drawBoard();
+        moveBall();
+        moveComputerPaddle(); // Move the computer's paddle
+        increaseScore();
+        checkCollisions();
+        gameOver();
+    }, 1000 / 60);
+}
+
+function increaseScore() {
+    if (ball.ballX - ball.radius < 0) {
+        computerScore++;
+        document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`;
+    } else if (ball.ballX + ball.radius > board.width) {
+        playerScore++;
+        document.querySelector('#player-score').textContent = `Player: ${playerScore}`;
     }
 }
 
@@ -117,36 +120,93 @@ function resetGame() {
     ball.velocityX = 3
     ball.velocityY = 3
     leftPaddle.paddlePositionY = board.height / 2 - 35
-    rightPaddle.paddlePositionY = board.height / 2 - 35
+    computerPaddle.paddlePositionY = board.height / 2 - 35
 }
 
-//function to increase the speed of the ball
-function increaseSpeed() {
-    if (ball.velocityX > 0 && ball.velocityY > 0) {
-        ball.velocityX++
-        ball.velocityY++
-    } else if (ball.velocityX < 0 && ball.velocityY < 0) {
-        ball.velocityX--
-        ball.velocityY--
+function gameOver() {
+    if (playerScore === 3) {
+        document.querySelector('.win-or-lose').textContent = 'You win!';
+    } else if (computerScore === 3) {
+        document.querySelector('.win-or-lose').textContent = 'Computer wins!';
+    }
+}
+
+
+function checkCollisions() {
+    // Ball and top/bottom boundaries
+    if (ball.ballY - ball.radius <= 0 || ball.ballY + ball.radius >= board.height) {
+        ball.velocityY = -ball.velocityY;
     }
 
+    // Ball and left/right boundaries
+    if (ball.ballX - ball.radius <= 0 || ball.ballX + ball.radius >= board.width) {
+        // Update scores
+        if (ball.ballX - ball.radius <= 0) {
+            computerScore++;
+        } else if (ball.ballX + ball.radius >= board.width) {
+            playerScore++;
+        }
 
+        // Reset ball to the center
+        ball.ballX = board.width / 2;
+        ball.ballY = board.height / 2;
+        ball.velocityX = -ball.velocityX;
+    }
 
-    //event listeners
-    const startButton = document.querySelector('#startbtn').addEventListener('click', () => {
-        startGame()
-    })
+    // Ball and paddles
+    if (
+        (ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
+            ball.ballY >= leftPaddle.paddlePositionY &&
+            ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height) ||
+        (ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
+            ball.ballY >= computertPaddle.paddlePositionY &&
+            ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height)
+    ) {
+        ball.velocityX = -ball.velocityX;
+    }
 }
 
-const resetButton = document.querySelector('#resetbtn').addEventListener('click', () => {
-    resetGame()
+function moveComputerPaddle() { // Move the computer's paddle
+    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) {
+        computerPaddle.velocity = -3;
+    } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) {
+        computerPaddle.velocity = 3;
+    } else {
+        computerPaddle.velocity = 0;
+    }
+    computerPaddle.paddlePositionY += computerPaddle.velocity;
+}
+
+
+// variables to keep track of score and levels of the game
+let startLevel = 1
+let playerScore = 0
+let computerScore = 0
+const maxLevel = 5
+
+//event listeners
+const startButton = document.querySelector('#startbtn').addEventListener('click', () => {
+    startGame()
 })
+
+
+document.addEventListener('mousemove', event => {
+    leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2;
+});
+
 
 //call functions. call functions makes sure the functions are executed
 drawBoard()
 drawBall()
 drawLeftPaddle()
-drawRightPaddle()
+drawComputerPaddle()
 moveLeftPaddle()
-moveRightPaddle()
+moveComputerPaddle()
 moveBall()
+gameOver()
+increaseScore()
+checkCollisions()
+
+startGame()
+resetGame()
+

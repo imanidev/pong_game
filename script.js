@@ -76,12 +76,12 @@ function moveBall() {
 
 //function to start the game
 function startGame() {
-    if (gameInterval) clearInterval(gameInterval); // clear any existing interval
+    if (gameInterval) clearInterval(gameInterval); // prevent multiple intervals from running at the same time
 
-    gameInterval = setInterval(function () { // the ball is able to move because of the setInterval method. It is set to 70 fps 
+    gameInterval = setInterval(function () { 
         drawBoard();
         moveBall();
-        moveComputerPaddle();
+        moveComputerPaddle(); 
         increaseScore();
         checkCollisions();
     }, 1000 / 70); // 70 fps
@@ -98,8 +98,6 @@ function resetGame() {
     computerPaddle.paddlePositionX = board.width - 20;
     document.querySelector('#player-score').textContent = 'Player: 0';
     document.querySelector('#computer-score').textContent = 'Computer: 0';
-
-    resetBoard();
 }
 
 //resets the ball to the center of the board
@@ -113,22 +111,15 @@ function resetBall() {
     ball.velocityY = Math.floor(Math.random() * 6 - 3); // random number between -3 and 3
 }
 
-//function to reset the board
-function resetBoard() {
-    context.clearRect(0, 0, board.width, board.height); //clear board
-    drawBall(); //draw ball
-    drawLeftPaddle(); //draw left paddle
-    drawComputerPaddle(); //draw right paddle
-}
 
 function checkCollisions() {
     //ball and top/bottom boundaries
     if (ball.ballY - ball.radius <= 0) {
         ball.velocityY = -ball.velocityY;
-        ball.ballY = ball.radius + 1;// move the ball away from the boundary by a small amount
+        ball.ballY = ball.radius + 10;// move the ball away from the boundary by a small amount
     } else if (ball.ballY + ball.radius >= board.height) {
         ball.velocityY = -ball.velocityY;
-        ball.ballY = board.height - ball.radius - 1; // move the ball away from the boundary by a small amount
+        ball.ballY = board.height - ball.radius - 10; // move the ball away from the boundary by a small amount
     }
 
     // statement to check if the ball hits the left paddle or the right paddle (computer paddle)
@@ -141,16 +132,18 @@ function checkCollisions() {
         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
 
     if (ballHitLeftPaddle || ballHitComputerPaddle) {
-        ball.velocityX = -(ball.velocityX + (Math.random() * 2 - 1));// reverse the direction of the ball and add a random value to its velocity
-        ball.velocityY = ball.velocityY + (Math.random() * 2 - 1); // add a random value to the ball's vertical velocity
+        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 1));// reverse the direction of the ball by multiplying by -1
+        ball.velocityY = ball.velocityY + (Math.random() * 2 - 1); // add a random value between -1 and 1 to the velocity of the ball
+        
+        // increase ball velocity by 2%
+        ball.velocityX *= 1.02;
+        ball.velocityY *= 1.02;
     }
 }
 
-//this function checks to see if the ball hits the paddle. If it does, the ball's velocity is reversed and a random number is added to the ball's velocity. This makes the game more interesting. this brings more realism to the game. it's as if you were playing against a real person.
-
 function moveComputerPaddle() {
-    const randomNumber = Math.floor(Math.random() * 4) + 1;
-    const moveComputerPaddleRandomly = Math.random() * 0.5 + 0.5;
+    const randomNumber = Math.floor(Math.random() * 3) + 1; // random number between 1 and 5
+    const moveComputerPaddleRandomly = Math.random() * 1.0 + 0.5; // random number between 0.5 and 1.5
     const maxPaddlePositionY = board.height - computerPaddle.height;
 
     if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) {
@@ -178,11 +171,7 @@ const maxScore = 5;
 // const maxRounds = 3; // maximum number of rounds to play
 let currentRound = 1;
 let gameInterval = 0; //make sure the game doesn't start automatically
-let increaseBallSpeed = 0.02;
 
-// update ball speed
-ball.velocityX *= increaseBallSpeed;
-ball.velocityY *= increaseBallSpeed;
 
 function winOrLose(winner) {
     let winOrLoseMessage = ''; //empty string to hold the message to be displayed

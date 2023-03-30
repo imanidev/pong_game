@@ -85,14 +85,12 @@ function startGame() {
         moveComputerPaddle()
         increaseScore()
         checkCollisions()
-
     }, 1000 / 70) // 70 fps
 }
 
-//function to reset the game
 function resetGame() {
     clearInterval(gameInterval) //to stop the game from running over and over again when the game is reset
-    ball.ballX = board.width / 2
+    ball.ballX = Math.floor(Math.random() * (board.width - ball.radius * 2)) + ball.radius;
     ball.ballY = board.height / 2
     ball.velocityX = 2
     ball.velocityY = 2
@@ -103,17 +101,20 @@ function resetGame() {
     startGame()
 }
 
-//function to increase score
-function increaseScore() {
-    if (ball.ballX - ball.radius < 0) {
-        computerScore++
-        document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`
-        resetGame()
+//resets the ball to the center of the board
+function resetBall() {
+    // reset ball position to random location on the board
+    ball.ballX = Math.floor(Math.random() * (board.width - ball.radius * 2) + ball.radius)
+    ball.ballY = Math.floor(Math.random() * (board.height - ball.radius * 2) + ball.radius)
 
-    } else if (ball.ballX + ball.radius > board.width) {
-        playerScore++
-        document.querySelector('#player-score').textContent = `Player: ${playerScore}`
-    }
+    // reset ball velocity
+    ball.velocityX = -ball.velocityX
+    ball.velocityY = Math.floor(Math.random() * 6 - 3) // random number between -3 and 3
+
+    // update ball speed
+    increaseBallSpeed += 0.05
+    ball.velocityX *= increaseBallSpeed
+    ball.velocityY *= increaseBallSpeed
 }
 
 function checkCollisions() {
@@ -165,7 +166,7 @@ function moveComputerPaddle() {
     }
 }
 
-//getting this to move randomly was challenging. I had to use the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 4 and added 1 to get a random number between 1 and 4. I then multiplied that number by a random number between 0.5 and 1 to get a random number between 0.5 and 4. I then used that number to move the paddle up and down. I also used the Math.floor() method to round the number down to the nearest whole number. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 0.5 and added 0.5 to get a random number between 0.5 and 1. I then used that number to add some randomness to the speed of the paddle. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 2 and subtracted 1 to get a random number between -1 and 1. I then used that number to add some randomness to the speed of the ball. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 2 and subtracted 1 to get a random number between -1 and 1. I then used that number to add some randomness to the speed of the ball.
+//getting this paddle to move randomly was challenging. I had to use the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 4 and added 1 to get a random number between 1 and 4. I then multiplied that number by a random number between 0.5 and 1 to get a random number between 0.5 and 4. I then used that number to move the paddle up and down. I also used the Math.floor() method to round the number down to the nearest whole number. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 0.5 and added 0.5 to get a random number between 0.5 and 1. I then used that number to add some randomness to the speed of the paddle. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 2 and subtracted 1 to get a random number between -1 and 1. I then used that number to add some randomness to the speed of the ball. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 2 and subtracted 1 to get a random number between -1 and 1. I then used that number to add some randomness to the speed of the ball.
 
 
 // variables to keep track of score and levels of the game
@@ -178,6 +179,30 @@ let increaseBallSpeed = 1.05 // increase the speed of the ball by 5% every time 
 
 
 
+function increaseScore() {
+    if (ball.ballX - ball.radius < 0) {
+        computerScore++
+        document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`
+        resetBall()
+        if (computerScore >= 5) {
+            endGame('Computer')
+        }
+    } else if (ball.ballX + ball.radius > board.width) {
+        playerScore++
+        document.querySelector('#player-score').textContent = `Player: ${playerScore}`
+        resetBall()
+        if (playerScore >= 5) {
+            endGame('Player')
+        }
+    }
+}
+
+function endGame(winner) {
+    const message = winner === 'Player' ? 'You win!' : 'You lose!'
+    const messageEl = document.createElement('h2')
+    messageEl.textContent = message
+    document.body.appendChild(messageEl)
+}
 
 //event listeners
 const startButton = document.querySelector('#startbtn').addEventListener('click', () => {
@@ -188,10 +213,6 @@ const resetButton = document.querySelector('#resetbtn').addEventListener('click'
     resetGame()
     drawBoard()
 })
-//mouse movement
-// document.addEventListener('mousemove', event => {
-//     leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2
-// })
 
 document.addEventListener('mousemove', event => {
     const maxPaddlePositionY = board.height - leftPaddle.height // calculate the maximum position of the paddle within the board's boundaries

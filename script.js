@@ -78,10 +78,10 @@ function moveBall() {
 function startGame() {
     if (gameInterval) clearInterval(gameInterval); // prevent multiple intervals from running at the same time
 
-    gameInterval = setInterval(function () { 
+    gameInterval = setInterval(function () {
         drawBoard();
         moveBall();
-        moveComputerPaddle(); 
+        moveComputerPaddle();
         increaseScore();
         checkCollisions();
     }, 1000 / 70); // 70 fps
@@ -134,7 +134,7 @@ function checkCollisions() {
     if (ballHitLeftPaddle || ballHitComputerPaddle) {
         ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 1));// reverse the direction of the ball by multiplying by -1
         ball.velocityY = ball.velocityY + (Math.random() * 2 - 1); // add a random value between -1 and 1 to the velocity of the ball
-        
+
         // increase ball velocity by 2%
         ball.velocityX *= 1.02;
         ball.velocityY *= 1.02;

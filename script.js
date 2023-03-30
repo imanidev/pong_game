@@ -90,7 +90,7 @@ function startGame() {
 
 function resetGame() {
     clearInterval(gameInterval) //to stop the game from running over and over again when the game is reset
-    ball.ballX = Math.floor(Math.random() * (board.width - ball.radius * 2)) + ball.radius;
+    ball.ballX = Math.floor(Math.random() * (board.width - ball.radius * 2)) + ball.radius
     ball.ballY = board.height / 2
     ball.velocityX = 2
     ball.velocityY = 2
@@ -98,7 +98,6 @@ function resetGame() {
     computerPaddle.paddlePositionY = board.height / 2 - 45
     playerScore = 0
     computerScore = 0
-    startGame()
 }
 
 //resets the ball to the center of the board
@@ -146,13 +145,13 @@ function checkCollisions() {
 
 function moveComputerPaddle() {
     const randomNumber = Math.floor(Math.random() * 4) + 1
-    const randomness = Math.random() * 0.5 + 0.5
+    const moveComputerPaddleRandomly = Math.random() * 0.5 + 0.5
     const maxPaddlePositionY = board.height - computerPaddle.height
 
     if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) {
-        computerPaddle.velocity = -randomNumber * randomness
+        computerPaddle.velocity = -randomNumber * moveComputerPaddleRandomly
     } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) {
-        computerPaddle.velocity = randomNumber * randomness
+        computerPaddle.velocity = randomNumber * moveComputerPaddleRandomly
     } else {
         computerPaddle.velocity = 0
     }
@@ -178,6 +177,18 @@ let gameInterval = null // it's null to make sure the game doesn't start automat
 let increaseBallSpeed = 1.05 // increase the speed of the ball by 5% every time it hits the paddle
 
 
+function winOrLose(winner) { 
+   let winOrLoseMessage = '' //empty string to hold the message to be displayed
+    if (winner === 'Player') {
+        winOrLoseMessage = 'You win!'
+    } else {
+        winOrLoseMessage = 'You lose!'
+    }
+    const messageEl = document.createElement('h1')
+    messageEl.textContent = winOrLoseMessage
+    document.body.appendChild(messageEl)
+    resetGame()
+}
 
 function increaseScore() {
     if (ball.ballX - ball.radius < 0) {
@@ -185,35 +196,32 @@ function increaseScore() {
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`
         resetBall()
         if (computerScore >= 5) {
-            endGame('Computer')
+            winOrLose('Computer')
         }
     } else if (ball.ballX + ball.radius > board.width) {
         playerScore++
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`
-        resetBall()
+        resetBall() // 
         if (playerScore >= 5) {
-            endGame('Player')
+            winOrLose('Player') // th
         }
     }
 }
 
-function endGame(winner) {
-    const message = winner === 'Player' ? 'You win!' : 'You lose!'
-    const messageEl = document.createElement('h2')
-    messageEl.textContent = message
-    document.body.appendChild(messageEl)
-}
-
 //event listeners
-const startButton = document.querySelector('#startbtn').addEventListener('click', () => {
+
+const startButton = document.querySelector('#startbtn')
+startButton.addEventListener('click', function () {
     startGame()
 })
 
-const resetButton = document.querySelector('#resetbtn').addEventListener('click', () => {
+const resetButton = document.querySelector('#resetbtn')
+resetButton.addEventListener('click', function () {
     resetGame()
     drawBoard()
 })
 
+// moves the left paddle up and down and limits the movement of the paddle within the board's boundaries
 document.addEventListener('mousemove', event => {
     const maxPaddlePositionY = board.height - leftPaddle.height // calculate the maximum position of the paddle within the board's boundaries
     leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2

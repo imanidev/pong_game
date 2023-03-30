@@ -7,24 +7,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Pong</title>
         <link rel="stylesheet" href="style.css">
-
     </head>
-    <h1>Pong</h1>
-    <canvas id='board'>
-        <div class='dashed-line'></div>
-    </canvas>
-    <div class='score-container'>
-        <div id='player-score'> Player: 0</div>
-        <div id='computer-score'>Computer: 0</div>
-    </div>
-    <div class='button-container'>
-        <button id='startbtn'>Start Game</button><br><br>
-        <button id='resetbtn'>Reset Game</button>
-    </div>
-
 
     <body>
-        <script src="script.js"></script>
+        <h1>Pong</h1>
+        <canvas id='board'>
+            <div class='dashed-line'></div>
+        </canvas>
+        <div class='score-container'>
+            <div id='player-score'> Player: 0</div>
+            <div id='computer-score'>Computer: 0</div>
+        </div>
+        <div class='button-container'>
+            <button id='startbtn'>Start Game</button><br><br>
+            <button id='resetbtn'>Reset Game</button>
+        </div>
+
+        <div class='instructions'>
+            <h2>Instructions</h2>
+            <p>Use your mouse scroll to move paddle up and down.</p>
+            <p>Try to get the ball past the computer's paddle.</p>
+            <p>First to 5 points wins!</p>
+            <footer>Made with ❤️ by Imani </footer>
+            <script src="script.js"></script>
     </body>
 
 </html>

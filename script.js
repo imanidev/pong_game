@@ -87,17 +87,24 @@ function startGame() {
     }, 1000 / 70); // 70 fps
 }
 
+let winOrLoseMessage;
 function resetGame() {
     clearInterval(gameInterval); //to stop the game from running over and over again when the game is reset
-    ball.ballY = board.height / 2;
-    ball.velocityX = 2;
-    ball.velocityY = 2;
-    leftPaddle.paddlePositionY = board.height / 2 - 45;
-    computerPaddle.paddlePositionY = board.height / 2 - 45;
-    leftPaddle.paddlePositionX = 10;
-    computerPaddle.paddlePositionX = board.width - 20;
-    document.querySelector('#player-score').textContent = 'Player: 0';
-    document.querySelector('#computer-score').textContent = 'Computer: 0';
+    // ball.ballY = board.height / 2;
+    // ball.velocityX = 2;
+    // ball.velocityY = 2;
+    // leftPaddle.paddlePositionY = board.height / 2 - 45;
+    // computerPaddle.paddlePositionY = board.height / 2 - 45;
+    // leftPaddle.paddlePositionX = 10;
+    // computerPaddle.paddlePositionX = board.width - 20;
+    // document.querySelector('#player-score').textContent = 'Player: 0';
+    // document.querySelector('#computer-score').textContent = 'Computer: 0';
+    // document.body.removeChild(messageEl)
+
+    reload = setInterval(function () {
+        location.reload();
+    }, 2000);
+    reload();
 }
 
 //resets the ball to the center of the board
@@ -174,7 +181,6 @@ let gameInterval = 0; //make sure the game doesn't start automatically
 
 
 function winOrLose(winner) {
-    let winOrLoseMessage = ''; //empty string to hold the message to be displayed
     if (winner === 'Player') {
         winOrLoseMessage = 'You win!';
     } else {
@@ -184,6 +190,7 @@ function winOrLose(winner) {
     messageEl.textContent = winOrLoseMessage;
     document.body.appendChild(messageEl);
     resetGame();
+    winOrLoseMessage = ''; //empty string to hold the message to be displayed
 }
 
 function increaseScore() {

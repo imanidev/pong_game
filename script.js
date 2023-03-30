@@ -23,10 +23,10 @@ const leftPaddle = {
     height: 90, // height of paddle
     paddlePositionX: 10, // x position of left paddle. The reason why it is 10 is because the left edge of the canvas is the starting point (edge)of the canvas.
     paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2) 
-    velocity: 2 // speed of paddle movement
+    // velocity: 2 // speed of paddle movement
 }
 
-// right paddle (computer paddle) 
+//right paddle (computer paddle) 
 const computerPaddle = {
     color: 'white',
     width: 10,
@@ -36,7 +36,15 @@ const computerPaddle = {
     velocity: 2
 }
 
-// draw the ball
+//function to draw the board
+function drawBoard() {
+    context.clearRect(0, 0, board.width, board.height) //clear board
+    drawBall() //draw ball
+    drawLeftPaddle() //draw left paddle
+    drawComputerPaddle() //draw right paddle
+}
+
+//draw the ball
 function drawBall() {
     context.beginPath() //start drawing
     context.fillStyle = ball.color //set color of ball
@@ -61,43 +69,25 @@ function drawComputerPaddle() {
     context.closePath()
 }
 
-//function to draw the board
-function drawBoard() {
-    context.clearRect(0, 0, board.width, board.height) //clear board
-    drawBall() //draw ball
-    drawLeftPaddle() //draw left paddle
-    drawComputerPaddle() //draw right paddle
-}
-
 //function to move the ball
 function moveBall() {
     ball.ballX += ball.velocityX //move ball in x direction. updates the position of the ball's velocity
     ball.ballY += ball.velocityY //move ball in y direction. updates the position of the ball's velocity
 }
 
-//function to move the computer paddle
-function moveComputerPaddle() { // Move the right paddle (computer paddle) 
-    computerPaddle.paddlePositionY += computerPaddle.velocity
-}
-
-
-// function to start the game
+//function to start the game
 function startGame() {
     if (gameInterval) clearInterval(gameInterval) // clear any existing interval
-    resetGame()
-    gameInterval = setInterval(function () { // the ball is able to 
+
+    gameInterval = setInterval(function () { // the ball is able to move because of the setInterval method. It is set to 70 fps 
         drawBoard()
         moveBall()
         moveComputerPaddle()
         increaseScore()
         checkCollisions()
-        checkWin()
-        checkLose()
+
     }, 1000 / 70) // 70 fps
 }
-//the ball is able to 
-
-
 
 //function to reset the game
 function resetGame() {
@@ -110,14 +100,15 @@ function resetGame() {
     computerPaddle.paddlePositionY = board.height / 2 - 45
     playerScore = 0
     computerScore = 0
+    startGame()
 }
-
 
 //function to increase score
 function increaseScore() {
     if (ball.ballX - ball.radius < 0) {
         computerScore++
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`
+        resetGame()
 
     } else if (ball.ballX + ball.radius > board.width) {
         playerScore++
@@ -125,25 +116,15 @@ function increaseScore() {
     }
 }
 
-// Ball and top/bottom boundaries
 function checkCollisions() {
-    if (ball.ballY - ball.radius <= 0 || ball.ballY + ball.radius >= board.height) {
-        ball.velocityY = - ball.velocityY
+    //ball and top/bottom boundaries
+    if (ball.ballY - ball.radius <= 0) {
+        ball.velocityY = -ball.velocityY
+        ball.ballY = ball.radius + 1// move the ball away from the boundary by a small amount
+    } else if (ball.ballY + ball.radius >= board.height) {
+        ball.velocityY = -ball.velocityY
+        ball.ballY = board.height - ball.radius - 1 // move the ball away from the boundary by a small amount
     }
-
-    // Ball and left/right boundaries
-    // if (ball.ballX - ball.radius <= 0 || ball.ballX + ball.radius >= board.width) {
-    //     // Update scores
-    //     if (ball.ballX - ball.radius <= 0) {
-    //         computerScore++
-    //     } else if (ball.ballX + ball.radius >= board.width) {
-    //         playerScore++
-    //     }
-    //     // Reset ball to the center
-    //     ball.ballX = board.width / 2
-    //     ball.ballY = board.height / 2
-    //     ball.velocityX = -ball.velocityX
-    // }
 
     // statement to check if the ball hits the left paddle or the right paddle (computer paddle)
     const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
@@ -155,22 +136,36 @@ function checkCollisions() {
         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height
 
     if (ballHitLeftPaddle || ballHitComputerPaddle) {
-        ball.velocityX = -ball.velocityX // reverses the direction of the ball
+        ball.velocityX = -(ball.velocityX + (Math.random() * 2 - 1))// reverse the direction of the ball and add a random value to its velocity
+        ball.velocityY = ball.velocityY + (Math.random() * 2 - 1) // add a random value to the ball's vertical velocity
     }
-
 }
 
-// moves the computer paddle based on the position of the ball on the y axis
+//this function checks to see if the ball hits the paddle. If it does, the ball's velocity is reversed and a random number is added to the ball's velocity. This makes the game more interesting. this brings more realism to the game. it's as if you were playing against a real person.
+
 function moveComputerPaddle() {
-    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { // checks if the ball is above the center of the paddle
-        computerPaddle.velocity = -2
+    const randomNumber = Math.floor(Math.random() * 4) + 1
+    const randomness = Math.random() * 0.5 + 0.5
+    const maxPaddlePositionY = board.height - computerPaddle.height
+
+    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) {
+        computerPaddle.velocity = -randomNumber * randomness
     } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) {
-        computerPaddle.velocity = 2
+        computerPaddle.velocity = randomNumber * randomness
     } else {
         computerPaddle.velocity = 0
     }
-    computerPaddle.paddlePositionY += computerPaddle.velocity;
+
+    computerPaddle.paddlePositionY += computerPaddle.velocity
+
+    if (computerPaddle.paddlePositionY < 0) { // limit the movement of the paddle within the board's boundaries
+        computerPaddle.paddlePositionY = 0
+    } else if (computerPaddle.paddlePositionY > maxPaddlePositionY) {
+        computerPaddle.paddlePositionY = maxPaddlePositionY
+    }
 }
+
+//getting this to move randomly was challenging. I had to use the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 4 and added 1 to get a random number between 1 and 4. I then multiplied that number by a random number between 0.5 and 1 to get a random number between 0.5 and 4. I then used that number to move the paddle up and down. I also used the Math.floor() method to round the number down to the nearest whole number. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 0.5 and added 0.5 to get a random number between 0.5 and 1. I then used that number to add some randomness to the speed of the paddle. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 2 and subtracted 1 to get a random number between -1 and 1. I then used that number to add some randomness to the speed of the ball. I also used the Math.random() method to generate a random number between 0 and 1. I then multiplied that number by 2 and subtracted 1 to get a random number between -1 and 1. I then used that number to add some randomness to the speed of the ball.
 
 
 // variables to keep track of score and levels of the game
@@ -181,19 +176,8 @@ const maxLevel = 5
 let gameInterval = null // it's null to make sure the game doesn't start automatically
 let increaseBallSpeed = 1.05 // increase the speed of the ball by 5% every time it hits the paddle
 
-function ifWin() {
-    if (playerScore === maxLevel) {
-        document.querySelector('.win-or-lose').textContent = 'You win!'
-        clearInterval(gameInterval)
-    }
-}
 
-function ifLose() {
-    if (computerScore === maxLevel) {
-        document.querySelector('.win-or-lose').textContent = 'Computer wins!'
-        clearInterval(gameInterval)
-    }
-}
+
 
 //event listeners
 const startButton = document.querySelector('#startbtn').addEventListener('click', () => {
@@ -202,15 +186,26 @@ const startButton = document.querySelector('#startbtn').addEventListener('click'
 
 const resetButton = document.querySelector('#resetbtn').addEventListener('click', () => {
     resetGame()
+    drawBoard()
 })
 //mouse movement
-document.addEventListener('mousemove', event => {
-    leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2
-})
+// document.addEventListener('mousemove', event => {
+//     leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2
+// })
 
+document.addEventListener('mousemove', event => {
+    const maxPaddlePositionY = board.height - leftPaddle.height // calculate the maximum position of the paddle within the board's boundaries
+    leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2
+    if (leftPaddle.paddlePositionY < 0) { // limit the movement of the paddle within the board's boundaries
+        leftPaddle.paddlePositionY = 0
+    } else if (leftPaddle.paddlePositionY > maxPaddlePositionY) {
+        leftPaddle.paddlePositionY = maxPaddlePositionY
+    }
+})
 
 //call functions
 drawBall()
 drawLeftPaddle()
 drawComputerPaddle()
 // moveLeftPaddle() // no longer needed sinece the left paddle is controlled by the mouse (aka the user)
+// window.requestAnimationFrame(computerPaddle)

@@ -11,7 +11,7 @@ board.style.backgroundColor = 'black'; //set background color of canvas
 const ball = {
     color: 'white',
     radius: 10,
-    ballX: board.width / 2, // x position of ball. board.width / 2 is the center of the canvas
+    ballX: board.width / 2, // x position of ball. board.width / 2 is the cente r of the canvas
     ballY: board.height / 2, // y position of ball. board.height / 2 is the center of the canvas
     velocityX: 3, // speed of ball in x direction
     velocityY: 3 // speed of ball in y direction
@@ -49,17 +49,17 @@ function drawBoard() {
 function drawBall() {
     context.beginPath(); //start drawing
     context.fillStyle = ball.color; //set color of ball
-    context.arc(ball.ballX, ball.ballY, ball.radius, 0, Math.PI * 2); //draw ball PI * 2 is the same as 360 degrees in a circle. The reason you multiply by 2 is because the arc method draws half a circle. So if you want to draw a full circle, you multiply by 2. Math.PI is the same as 180 degrees in a circle.
+    context.arc(ball.ballX, ball.ballY, ball.radius, 0, Math.PI * 2); //draw ball PI * 2 is the same as 360 degrees in a circle. The reason you multiply by 2 is because the arc method draws half a circle. So multiply by 2 for whole circle. Math.PI is the same as 180 degrees in a circle.
     context.fill(); //fill ball
     context.closePath(); //end drawing
 }
 
 //draw the left paddle
 function drawLeftPaddle() {
-    context.beginPath(); //start drawing
-    context.fillStyle = leftPaddle.color; //set color of paddle
+    // context.beginPath(); //start drawing
+    context.fillStyle = leftPaddle.color;
     context.fillRect(leftPaddle.paddlePositionX, leftPaddle.paddlePositionY, leftPaddle.width, leftPaddle.height); //draw paddle from all sides (x, y, width, height)
-    context.closePath(); //end drawing
+    // context.closePath(); //end drawing
 }
 
 //draw the computer paddle (right)
@@ -215,46 +215,45 @@ function checkCollisions() {
     }
 }
 
-
-
-
-
 //variables store scores of player and computer
 let playerScore = 0;
 let computerScore = 0;
 let gameInterval = null; //make sure the game doesn't start automatically. using null because theres no value yet
 
-//function to display the winner or loser
-function winOrLose(winner) {
-    let winOrLoseMessage;
-    if (winner === 'Player') {
-        winOrLoseMessage = 'You win!';
-    } else {
-        winOrLoseMessage = 'You lose!';
-    }
-    const messageEl = document.createElement('h1');
-    messageEl.textContent = winOrLoseMessage;
-    document.body.appendChild(messageEl);
-    resetGame();
-    // winOrLoseMessage = ''; //empty string to hold the message to be displayed
-}
 
+//function to increase score
 function increaseScore() {
     if (ball.ballX - ball.radius < 0) {
         computerScore++;
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`;
-       resetBallToCenter();
-        if (computerScore >= 5) {
-            winOrLose('Computer');
+        resetBallToCenter();
+        if (computerScore >= 7) {
+            whoWins('Computer');
         }
     } else if (ball.ballX + ball.radius > board.width) {
         playerScore++;
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`;
-resetBallToCenter();
-        if (playerScore >= 5) {
-            winOrLose('Player');
+        resetBallToCenter();
+        if (playerScore >= 7) {
+            whoWins('Player');
         }
     }
+}
+
+//function to show win or lose message
+function whoWins(winner) {
+    let winnerMessage;
+    if (winner === 'Player') {
+        winnerMessage = 'You win!';
+    } else if (winner === 'Computer') {
+        winnerMessage = 'Computer Wins!';
+    }
+
+    const messageEl = document.createElement('h1');
+    messageEl.textContent = winnerMessage;
+    document.querySelector('.winner-display').appendChild(messageEl);
+    resetGame();
+    // whoWinsMessage = ''; //empty string to hold the message to be displayed
 }
 
 //event listeners
@@ -281,7 +280,5 @@ document.addEventListener('mousemove', event => {
     }
 });
 
-//call functions
-drawBall();
-drawLeftPaddle();
-drawComputerPaddle();
+
+drawBoard();

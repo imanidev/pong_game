@@ -5,6 +5,8 @@ board.width = 600; //set width of canvas
 board.height = 600; //set height of canvas
 board.style.backgroundColor = 'black'; //set background color of canvas
 
+//Note: the 0 represents in canvas the top left corner of the canvas. The x axis goes from left to right and the y axis goes from top to bottom. So the top left corner is 0,0. The bottom right corner is 600,600. The x axis goes from 0 to 600 and the y axis goes from 0 to 600. coordinates (0,0)also (x,y)
+
 //ball object
 const ball = {
     color: 'white',
@@ -78,28 +80,35 @@ function moveBall() {
 function moveComputerPaddle() {
     const randomNumber = Math.floor(Math.random() * 3) + 1; // random number between 1 and 3
     const moveComputerPaddleRandomly = Math.random() * 1 + 0.5; // random number between 0.5 and 1
-    const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction
+    const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
 
-    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { // if the ball is above the center of the paddle, the paddle will move up
-        computerPaddle.velocity = -randomNumber * moveComputerPaddleRandomly; // the paddle will move up according to the random number generated
-    } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) {
-        computerPaddle.velocity = randomNumber * moveComputerPaddleRandomly; //
+    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { //checks if the ball is above the center of the paddle
+        computerPaddle.velocity = -randomNumber * moveComputerPaddleRandomly; // moves the paddle up. it's negative to make the paddle move up because the y axis goes from top to bottom. 
+    } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) { //if not, then the ball is below the center of the paddle   
+        computerPaddle.velocity = randomNumber * moveComputerPaddleRandomly; // moves the paddle down. the positive sign is to move the paddle down
     } else {
-        computerPaddle.velocity = 0; // paddle is at center. so it wont move
+        computerPaddle.velocity = 0;  //else, the paddle doesnt move
     }
 
-    computerPaddle.paddlePositionY += computerPaddle.velocity; //update the Y position of the paddle to the velocity of the paddle
+    //randomNumber and moveComputerPaddleRandomly variables used to set the speed and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
 
-    if (computerPaddle.paddlePositionY < 0) { // limit the movement of the paddle within the board's boundaries
-        computerPaddle.paddlePositionY = 0;
-    } else if (computerPaddle.paddlePositionY > maxPaddlePositionY) {
-        computerPaddle.paddlePositionY = maxPaddlePositionY;
+    //the computer paddle's movement is determined by the position of the ball relative to the center of the paddle. If the ball is above the center of the paddle, the paddle will move up, and if the ball is below the center, the paddle will move down.
+
+
+    computerPaddle.paddlePositionY += computerPaddle.velocity; //update the position of the paddle in the y direction. basically what makes the paddle move up and down
+
+    if (computerPaddle.paddlePositionY < 0) { //if the paddle goes off the top of the board, set the paddle position to 0
+        computerPaddle.paddlePositionY = 0; //
+    } else if (computerPaddle.paddlePositionY > maxPaddlePositionY) { //if the paddle goes off the bottom of the board
+        computerPaddle.paddlePositionY = maxPaddlePositionY; //set the paddle position to (510)
     }
 }
 
+
+
 //function to start the game
 function startGame() {
-    if (gameInterval) clearInterval(gameInterval); // prevent multiple intervals from running at the same time
+    if (gameInterval) clearInterval(gameInterval); //if there's a game already running, clear it. this is to stop the game from running over and over.
 
     gameInterval = setInterval(function () {
         drawBoard();
@@ -111,7 +120,7 @@ function startGame() {
 }
 
 function resetGame() {
-    clearInterval(gameInterval); //to stop the game from running over and over again when the game is reset
+    clearInterval(gameInterval); //clears the game
     // ball.ballY = board.height / 2;
     // ball.velocityX = 2;
     // ball.velocityY = 2;
@@ -123,60 +132,101 @@ function resetGame() {
     // document.querySelector('#computer-score').textContent = 'Computer: 0';
     // document.body.removeChild(messageEl)
     reload = setInterval(function () {
-        location.reload();
-    }, 1500); //1.5 seconds
+        location.reload(); //acts like a refresh button
+    }, 2000);
     reload();
 }
 
 //reset ball position to random location on the board
-function resetBall() {
-    ball.ballX = Math.floor(Math.random() * (board.width - ball.radius * 2) + ball.radius); // this will give a random number between 10 and 590
-    ball.ballY = Math.floor(Math.random() * (board.height - ball.radius * 2) + ball.radius); // this will give a random number between 10 and 590
+// function resetBall() {
+//     ball.ballX = Math.floor(Math.random() * (board.width - ball.radius * 2) + ball.radius); // this will give a random number between 10 and 590
+//     ball.ballY = Math.floor(Math.random() * (board.height - ball.radius * 2) + ball.radius); // this will give a random number between 10 and 590
 
-    // reset ball velocity
+//     // reset ball velocity
+//     ball.velocityX = - ball.velocityX;
+//     ball.velocityY = Math.floor(Math.random() * 6 - 3); // random number between -3 and 3
+// }
+
+//function to reset ball back to center of board
+function resetBallToCenter() {
+    ball.ballX = board.width / 2;
+    ball.ballY = board.height / 2;
     ball.velocityX = - ball.velocityX;
-    ball.velocityY = Math.floor(Math.random() * 6 - 3); // random number between -3 and 3
+    ball.velocityY = 0;
 }
 
 
+// function checkCollisions() {
+//     //ball and top/bottom boundaries
+//     if (ball.ballY - ball.radius <= 0) { // the 0 represents the top of the board. the radius is to represent 
+//         ball.velocityY = -ball.velocityY;
+//         ball.ballY = ball.radius;
+//     } else if (ball.ballY + ball.radius >= board.height) {
+//         ball.velocityY = -ball.velocityY;
+//         ball.ballY = board.height - ball.radius;
+//     }
+
+//     //check if the ball hits the left paddle or the right paddle (computer paddle)
+//     const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
+//         ball.ballY >= leftPaddle.paddlePositionY &&
+//         ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height;
+
+//     const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
+//         ball.ballY >= computerPaddle.paddlePositionY && // this makes sure the ball hits the paddle and not the board
+//         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
+
+//     if (ballHitLeftPaddle || ballHitComputerPaddle) { //
+//         ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3)); // add a random value between -3 and 3 to the velocity of the ball
+//         ball.velocityY = ball.velocityY + (Math.random() * 2 - 3); // add a random value between -3 and 3 to the velocity of the ball 
+
+//         // increase ball velocity by 2%
+//         ball.velocityX *= 1.02;
+//         ball.velocityY *= 1.02;
+//     }
+// }
+
 function checkCollisions() {
-    //ball and top/bottom boundaries
-    if (ball.ballY - ball.radius <= 0) {
+    const topBoundary = ball.ballY - ball.radius <= 0;
+    const bottomBoundary = ball.ballY + ball.radius >= board.height;
+    //checks to see if the ball hits the top or bottom of the board
+
+    if (topBoundary || bottomBoundary) {
         ball.velocityY = -ball.velocityY;
-        ball.ballY = ball.radius;
-    } else if (ball.ballY + ball.radius >= board.height) {
-        ball.velocityY = -ball.velocityY;
-        ball.ballY = board.height - ball.radius;
+        if (topBoundary) {
+            ball.ballY = ball.radius;
+        } else {
+            ball.ballY = board.height - ball.radius;
+        }
     }
 
-    //check if the ball hits the left paddle or the right paddle (computer paddle)
     const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
         ball.ballY >= leftPaddle.paddlePositionY &&
         ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height;
 
     const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
-        ball.ballY >= computerPaddle.paddlePositionY && // this makes sure the ball hits the paddle and not the board
+        ball.ballY >= computerPaddle.paddlePositionY &&
         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
 
-    if (ballHitLeftPaddle || ballHitComputerPaddle) { //
-        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3)); // add a random value between -3 and 3 to the velocity of the ball
-        ball.velocityY = ball.velocityY + (Math.random() * 2 - 3); // add a random value between -3 and 3 to the velocity of the ball 
-
-        // increase ball velocity by 2%
+    if (ballHitLeftPaddle || ballHitComputerPaddle) {
+        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3));
+        ball.velocityY += (Math.random() * 2 - 3);
         ball.velocityX *= 1.02;
         ball.velocityY *= 1.02;
     }
 }
 
+
+
+
+
+//variables store scores of player and computer
 let playerScore = 0;
 let computerScore = 0;
-const maxScore = 5;
 let gameInterval = null; //make sure the game doesn't start automatically. using null because theres no value yet
 
-
+//function to display the winner or loser
 function winOrLose(winner) {
-
-    let winOrLoseMessage; // put inside winOrLoseFunction
+    let winOrLoseMessage;
     if (winner === 'Player') {
         winOrLoseMessage = 'You win!';
     } else {
@@ -193,14 +243,14 @@ function increaseScore() {
     if (ball.ballX - ball.radius < 0) {
         computerScore++;
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`;
-        resetBall();
+       resetBallToCenter();
         if (computerScore >= 5) {
             winOrLose('Computer');
         }
     } else if (ball.ballX + ball.radius > board.width) {
         playerScore++;
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`;
-        resetBall(); // 
+resetBallToCenter();
         if (playerScore >= 5) {
             winOrLose('Player');
         }

@@ -12,12 +12,13 @@
     <body>
         <h1>Pong</h1>
         <canvas id='board'>
-            <div class='dashed-line'></div>
         </canvas>
+
         <div class='score-container'>
             <div id='player-score'> Player: 0 </div>
             <div id='computer-score'>Computer 0 </div>
         </div>
+
         <div class='button-container'>
             <button id='startbtn'>Start Game</button><br><br>
             <button id='resetbtn'>Reset Game</button>
@@ -27,10 +28,12 @@
             <h2>Instructions</h2>
             <p>Move your mouse up and down to control paddle</p>
             <p>Try to get the ball past the computer's paddle</p>
-            <p>Score 5 points to win!</p>
+            <p>Score 10 points to win!</p>
         </div>
 
-        <footer></footer>
+        <div class='winner-display'></div>
+
+        <footer>Made with love, sweat and tears</footer>
         <script src="script.js"></script>
     </body>
 

@@ -198,9 +198,9 @@ function checkCollisions() { //V2
         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
 
     if (topBoundary || bottomBoundary) {
-        ball.velocityY = -ball.velocityY;
+        const bounce = ball.velocityY = -ball.velocityY; //reverse the direction of the ball in the y axis
         if (topBoundary) {
-            ball.ballY = ball.radius;
+            ball.ballY = ball.radius; //
         } else {
             ball.ballY = board.height - ball.radius;
         }
@@ -219,16 +219,19 @@ let playerScore = 0;
 let computerScore = 0;
 let gameInterval = null; //make sure the game doesn't start automatically. using null because theres no value yet
 
-//function to increase score
+//increase score
 function increaseScore() {
-    if (ball.ballX - ball.radius < 0) {
+    const leftPaddleScore = ball.ballX - ball.radius < 0; //this is the left side of the board
+    const rightPaddleScore = ball.ballX + ball.radius > board.width; //this is the right side of the board
+
+    if (leftPaddleScore) {
         computerScore++;
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`;
         resetBallToCenter();
         if (computerScore >= 10) {
             whoWins('Computer');
         }
-    } else if (ball.ballX + ball.radius > board.width) {
+    } else if (rightPaddleScore) {
         playerScore++;
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`;
         resetBallToCenter();
@@ -240,7 +243,7 @@ function increaseScore() {
 
 //show win or lose message
 function whoWins(winner) {
-    let winnerMessage;
+    let winnerMessage; // holds the message to be displayed
     if (winner === 'Player') {
         winnerMessage = 'You win!';
     } else if (winner === 'Computer') {
@@ -251,7 +254,6 @@ function whoWins(winner) {
     messageEl.textContent = winnerMessage;
     document.querySelector('.winner-display').appendChild(messageEl);
     resetGame();
-    // whoWinsMessage = ''; //empty string to hold the message to be displayed
 }
 
 //event listeners
@@ -265,7 +267,6 @@ resetButton.addEventListener('click', function () {
     resetGame();
     drawBoard();
 });
-
 
 document.addEventListener('mousemove', event => {
     const maxPaddlePositionY = board.height - leftPaddle.height; // calculate the maximum position of the paddle within the board's boundaries

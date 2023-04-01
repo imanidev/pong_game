@@ -5,6 +5,7 @@ board.width = 600; //set width of canvas
 board.height = 600; //set height of canvas
 board.style.backgroundColor = 'black'; //set background color of canvas
 
+
 //Note: the 0 represents in canvas the top left corner of the canvas. The x axis goes from left to right and the y axis goes from top to bottom. So the top left corner is 0,0. The bottom right corner is 600,600. The x axis goes from 0 to 600 and the y axis goes from 0 to 600. coordinates (0,0)also (x,y)
 
 //ball object
@@ -34,10 +35,10 @@ const computerPaddle = {
     height: 90,
     paddlePositionX: board.width - 20, // its 20 because the width of the paddle is 10. to be at the right edge of the canvas, subtract an additional 10 from the width of the canvas.
     paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2)
-    velocity: 3
+    velocity: 3 // base speed 
 };
 
-//function to draw the board
+//draw board
 function drawBoard() {
     context.clearRect(0, 0, board.width, board.height); // this makes sure that the canvas is cleared before drawing the next frame. The x and y are zero to clear whole canvas starting from the top left corner. 
     drawBall();
@@ -45,7 +46,7 @@ function drawBoard() {
     drawComputerPaddle(); //draw right paddle
 }
 
-//draw the ball
+//draw ball
 function drawBall() {
     context.beginPath();
     context.fillStyle = ball.color; //set color of ball
@@ -54,7 +55,7 @@ function drawBall() {
     context.closePath();
 }
 
-//draw the left paddle
+//draw left paddle
 function drawLeftPaddle() {
     context.beginPath(); //start drawing
     context.fillStyle = leftPaddle.color;
@@ -62,7 +63,7 @@ function drawLeftPaddle() {
     context.closePath(); //end drawing
 }
 
-//draw the computer paddle (right)
+//draw computer paddle (right)
 function drawComputerPaddle() {
     context.beginPath();
     context.fillStyle = computerPaddle.color;
@@ -70,28 +71,33 @@ function drawComputerPaddle() {
     context.closePath();
 }
 
-//function to move the ball
+//move ball
 function moveBall() {
     ball.ballX += ball.velocityX;
     ball.ballY += ball.velocityY;
     // the ball moves according to the velocity of the ball in the x and y direction
 }
 
+//move computer paddle
 function moveComputerPaddle() {
-    const randomNumber = Math.floor(Math.random() * 3) + 1; // random number between 1 and 3
-    const moveComputerPaddleRandomly = Math.random() * 1 + 0.5; // random number between 0.5 and 1
+    const velocityStrength = Math.floor(Math.random() * 3) + 1; // random number between 1 and 3
+
+    const computerPaddleMovementRandomness = Math.random() * 1 + 0.5; // random number between 0.5 and 1
+
     const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
 
-    if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { //checks if the ball is above the center of the paddle
-        computerPaddle.velocity = -randomNumber * moveComputerPaddleRandomly; // moves the paddle up. *rocket ship analogy*  negative sign is to move the paddle up
-    } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) { //if not, then the ball is below the center of the paddle   
-        computerPaddle.velocity = randomNumber * moveComputerPaddleRandomly; // moves the paddle down. the positive sign is to move the paddle down
-    } else {
-        computerPaddle.velocity = 0;  //else, the paddle doesnt move
+    function moveUpOrDown() {
+        if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { //checks if the ball is above the center of the paddle
+            computerPaddle.velocity = -velocityStrength * computerPaddleMovementRandomness; // negative sign moves the paddle up. *rocket ship analogy* 
+        } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) { //ball is below the center of the paddle   
+            computerPaddle.velocity = velocityStrength * computerPaddleMovementRandomness; // moves the paddle down. the positive sign is to move the paddle down
+        } else {
+            computerPaddle.velocity = 0;  //else, the paddle doesnt move
+        }
     }
+    //velocityStrength and computerPaddleMovementRandomness are multiplied to get the velocity and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
 
-    //randomNumber and moveComputerPaddleRandomly are multiplied to get the velocity and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
-    //the computer paddle's movement is determined by the position of the ball relative to the center of the paddle (computerPaddle.height / 2). If the ball is above the center of the paddle, the paddle will move up, and if the ball is below the center, the paddle will move down.
+    //the computer paddle's movement is relative to the center of the paddle (computerPaddle.height / 2). If the ball is above the center of the paddle, the paddle will move up, and if the ball is below the center, the paddle will move down.
 
     computerPaddle.paddlePositionY += computerPaddle.velocity; // what makes the paddle move up and down
 
@@ -103,11 +109,10 @@ function moveComputerPaddle() {
         }
     }
     stayWithinFrame();
+    moveUpOrDown();
 }
 
-
-
-//function to start the game
+//start the game
 function startGame() {
     if (gameInterval) clearInterval(gameInterval); //if there's a game already running, clear it. to stop the game from running over and over.
 
@@ -120,6 +125,7 @@ function startGame() {
     }, 1000 / 70); // 70 fps
 }
 
+//restart game
 function resetGame() {
     clearInterval(gameInterval); //clears the game
     // ball.ballY = board.height / 2;
@@ -133,13 +139,14 @@ function resetGame() {
     // document.querySelector('#computer-score').textContent = 'Computer: 0';
     // document.body.removeChild(messageEl)
 
+    // reload page
     function reloadPage() {
         location.reload(); //this reloads the page based on the current url
     }
     setInterval(reloadPage, 2000);
 }
 
-//function to reset ball back to center of board
+//reset ball back to center of board
 function resetBallToCenter() {
     ball.ballX = board.width / 2;
     ball.ballY = board.height / 2;
@@ -176,6 +183,7 @@ function resetBallToCenter() {
 //     }
 // }
 
+//collision detection
 function checkCollisions() { //V2
     const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board
     const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
@@ -203,20 +211,13 @@ function checkCollisions() { //V2
         ball.velocityY += (Math.random() * 2 - 3);
         ball.velocityX *= 1.02; //increase ball Xvelocity by 2%
         ball.velocityY *= 1.02; //increase ball Yvelocity by 2%
-
-
-
     }
 }
 
-
-
-
-//variables store scores of player and computer
+//store scores of player and computer
 let playerScore = 0;
 let computerScore = 0;
 let gameInterval = null; //make sure the game doesn't start automatically. using null because theres no value yet
-
 
 //function to increase score
 function increaseScore() {
@@ -224,20 +225,20 @@ function increaseScore() {
         computerScore++;
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`;
         resetBallToCenter();
-        if (computerScore >= 7) {
+        if (computerScore >= 10) {
             whoWins('Computer');
         }
     } else if (ball.ballX + ball.radius > board.width) {
         playerScore++;
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`;
         resetBallToCenter();
-        if (playerScore >= 7) {
+        if (playerScore >= 10) {
             whoWins('Player');
         }
     }
 }
 
-//function to show win or lose message
+//show win or lose message
 function whoWins(winner) {
     let winnerMessage;
     if (winner === 'Player') {
@@ -254,7 +255,6 @@ function whoWins(winner) {
 }
 
 //event listeners
-
 const startButton = document.querySelector('#startbtn');
 startButton.addEventListener('click', function () {
     startGame();
@@ -266,16 +266,15 @@ resetButton.addEventListener('click', function () {
     drawBoard();
 });
 
-// moves the left paddle up and down and limits the movement of the paddle within the board's boundaries
+
 document.addEventListener('mousemove', event => {
     const maxPaddlePositionY = board.height - leftPaddle.height; // calculate the maximum position of the paddle within the board's boundaries
-    leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2;
-    if (leftPaddle.paddlePositionY < 0) { // limit the movement of the paddle within the board's boundaries.
+    leftPaddle.paddlePositionY = event.clientY - board.offsetTop - leftPaddle.height / 2; // board.offsetTop is the distance from the top of the board to the top of the page. event.clientY is the distance from the top of the page to the mouse pointer. leftPaddle.height/2 is to make sure the mouse pointer is in the middle of the paddle
+    if (leftPaddle.paddlePositionY < 0) {
         leftPaddle.paddlePositionY = 0;
     } else if (leftPaddle.paddlePositionY > maxPaddlePositionY) {
         leftPaddle.paddlePositionY = maxPaddlePositionY;
     }
 });
-
 
 drawBoard();

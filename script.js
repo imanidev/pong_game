@@ -93,15 +93,16 @@ function moveComputerPaddle() {
     //randomNumber and moveComputerPaddleRandomly are multiplied to get the velocity and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
     //the computer paddle's movement is determined by the position of the ball relative to the center of the paddle (computerPaddle.height / 2). If the ball is above the center of the paddle, the paddle will move up, and if the ball is below the center, the paddle will move down.
 
-
     computerPaddle.paddlePositionY += computerPaddle.velocity; // what makes the paddle move up and down
 
-    if (computerPaddle.paddlePositionY < 0) { //if the paddle goes off the top of the board, set the paddle position to 0
-        computerPaddle.paddlePositionY = 0; //
-    } else if (computerPaddle.paddlePositionY > maxPaddlePositionY) { //if the paddle goes off the bottom of the board
-        computerPaddle.paddlePositionY = maxPaddlePositionY; //set the paddle position to (510)
+    function stayWithinFrame() {
+        if (computerPaddle.paddlePositionY < 0) { //if the paddle goes off the top of the board, set the paddle position to 0
+            computerPaddle.paddlePositionY = 0; //
+        } else if (computerPaddle.paddlePositionY > maxPaddlePositionY) { //if the paddle goes off the bottom of the board
+            computerPaddle.paddlePositionY = maxPaddlePositionY; //set the paddle position to (510)
+        }
     }
-    console.log(computerPaddle.velocity);
+    stayWithinFrame();
 }
 
 
@@ -132,10 +133,10 @@ function resetGame() {
     // document.querySelector('#computer-score').textContent = 'Computer: 0';
     // document.body.removeChild(messageEl)
 
-    function revertBackToDefault() {
-        location.reload();
+    function reloadPage() {
+        location.reload(); //this reloads the page based on the current url
     }
-    setInterval(revertBackToDefault, 2000);
+    setInterval(reloadPage, 2000);
 }
 
 //function to reset ball back to center of board
@@ -175,10 +176,18 @@ function resetBallToCenter() {
 //     }
 // }
 
-function checkCollisions() {
-    const topBoundary = ball.ballY - ball.radius <= 0;
-    const bottomBoundary = ball.ballY + ball.radius >= board.height;
-    //checks to see if the ball hits the top or bottom of the board
+function checkCollisions() { //V2
+    const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board
+    const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
+
+
+    const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
+        ball.ballY >= leftPaddle.paddlePositionY &&
+        ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height;
+
+    const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
+        ball.ballY >= computerPaddle.paddlePositionY &&
+        ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
 
     if (topBoundary || bottomBoundary) {
         ball.velocityY = -ball.velocityY;
@@ -189,19 +198,14 @@ function checkCollisions() {
         }
     }
 
-    const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
-        ball.ballY >= leftPaddle.paddlePositionY &&
-        ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height;
-
-    const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
-        ball.ballY >= computerPaddle.paddlePositionY &&
-        ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
-
     if (ballHitLeftPaddle || ballHitComputerPaddle) {
         ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3));
         ball.velocityY += (Math.random() * 2 - 3);
         ball.velocityX *= 1.02; //increase ball Xvelocity by 2%
         ball.velocityY *= 1.02; //increase ball Yvelocity by 2%
+
+
+
     }
 }
 

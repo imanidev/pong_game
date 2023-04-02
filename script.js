@@ -1,31 +1,31 @@
 //board
-const board = document.querySelector('#board'); //select canvas element
-const context = board.getContext('2d'); //get context of canvas element (2d)
-board.width = 600; //set width of canvas
-board.height = 600; //set height of canvas
-board.style.backgroundColor = 'black'; //set background color of canvas
+const board = document.querySelector('#board');
+const context = board.getContext('2d');
+board.width = 600;
+board.height = 600;
+board.style.backgroundColor = 'black';
 
 
-//Note: the 0 represents in canvas the top left corner of the canvas. The x axis goes from left to right and the y axis goes from top to bottom. So the top left corner is 0,0. The bottom right corner is 600,600. The x axis goes from 0 to 600 and the y axis goes from 0 to 600. coordinates (0,0)also (x,y)
+//0 represents the top left corner of the board. The x axis goes from left to right and the y axis goes from top to bottom. 
+//So the top left corner is 0, 0. The bottom right corner is 600, 600. The x axis goes from 0 to 600 and the y axis goes from 0 to 600
 
 //ball object
 const ball = {
     color: 'white',
     radius: 10,
-    ballX: board.width / 2, // x position of ball. board.width / 2 is the center of the canvas
-    ballY: board.height / 2, // y position of ball. board.height / 2 is the center of the canvas
+    ballX: board.width / 2, // x position of ball
+    ballY: board.height / 2, // y position of ball
     velocityX: 3, // speed of ball in x direction
     velocityY: 3 // speed of ball in y direction
 };
-//Since the width and height of the canvas is 600px on both sides, we divide it by 2 to get the center of the canvas. 
 
 //left paddle object
 const leftPaddle = {
     color: 'white',
-    width: 10, // width of paddle
-    height: 90, // height of paddle
-    paddlePositionX: 10, // x position of left paddle. 10 because the left edge of the canvas is the starting point edge of the canvas.
-    paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2) 
+    width: 10,
+    height: 90,
+    paddlePositionX: 10, // x position of left paddle. 10 because the left edge of the board is the starting point edge of the board
+    paddlePositionY: board.height / 2 - 45, // center of paddle
 };
 
 //right paddle (computer paddle) 
@@ -33,14 +33,17 @@ const computerPaddle = {
     color: 'white',
     width: 10,
     height: 90,
-    paddlePositionX: board.width - 20, // its 20 because the width of the paddle is 10. to be at the right edge of the canvas, subtract an additional 10 from the width of the canvas.
-    paddlePositionY: board.height / 2 - 45, // 45 is half of the height of the paddle (90/2)
+    paddlePositionX: board.width - 20, // 20 because the width of the paddle is 10. to be at the right edge of the board, subtract an additional 10 from the width of the board
+    paddlePositionY: board.height / 2 - 45, // center of paddle
     velocity: 3 // base speed 
 };
 
+//Since the width and height of the board is 600px. Divide it by 2 to get the center of the board
+//board.height / 2 = the center of the board
+
 //draw board
 function drawBoard() {
-    context.clearRect(0, 0, board.width, board.height); // this makes sure that the canvas is cleared before drawing the next frame. The x and y are zero to clear whole canvas starting from the top left corner. 
+    context.clearRect(0, 0, board.width, board.height); //clears board before drawing the next frame. The x and y are zeros to clear the board starting from the top left corner 
     drawBall();
     drawLeftPaddle(); //draw left paddle
     drawComputerPaddle(); //draw right paddle
@@ -50,10 +53,11 @@ function drawBoard() {
 function drawBall() {
     context.beginPath();
     context.fillStyle = ball.color; //set color of ball
-    context.arc(ball.ballX, ball.ballY, ball.radius, 0, Math.PI * 2); //draw ball PI * 2 is the same as 360 degrees in a circle. The reason you multiply by 2 is because the arc method draws half a circle. So multiply by 2 for whole circle. Math.PI is the same as 180 degrees in a circle.
+    context.arc(ball.ballX, ball.ballY, ball.radius, 0, Math.PI * 2);
     context.fill();
     context.closePath();
 }
+//draw ball PI * 2 is the same as 360 degrees in a circle. The reason you multiply by 2 is because the arc method draws half a circle. So multiply by 2 for whole circle. Math.PI is the same as 180 degrees
 
 //draw left paddle
 function drawLeftPaddle() {
@@ -81,29 +85,28 @@ function moveBall() {
 //move computer paddle
 function moveComputerPaddle() {
     const velocityStrength = Math.floor(Math.random() * 3) + 1; // random number between 1 and 3
-
-    const computerPaddleMovementRandomness = Math.random() * 1 + 0.5; // random number between 0.5 and 1
+    const compPaddleMovementVariation = Math.random() * 1 + 0.5; // random number between 0.5 and 1
 
     const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
 
     function moveUpOrDown() {
-        if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { //checks if the ball is above the center of the paddle
-            computerPaddle.velocity = -velocityStrength * computerPaddleMovementRandomness; // negative sign moves the paddle up. *rocket ship analogy* 
+        if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { //ball is above the center of the paddle
+            computerPaddle.velocity = -velocityStrength * compPaddleMovementVariation; // negative sign moves the paddle up. *rocket ship analogy* 
         } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) { //ball is below the center of the paddle   
-            computerPaddle.velocity = velocityStrength * computerPaddleMovementRandomness; // moves the paddle down. the positive sign is to move the paddle down
+            computerPaddle.velocity = velocityStrength * compPaddleMovementVariation; // moves the paddle down. the positive sign is to move the paddle down
         } else {
             computerPaddle.velocity = 0;  //else, the paddle doesnt move
         }
     }
-    //velocityStrength and computerPaddleMovementRandomness are multiplied to get the velocity and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
+    //velocityStrength andcompPaddleMovementVariationare multiplied to get the velocity and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
 
     //the computer paddle's movement is relative to the center of the paddle (computerPaddle.height / 2). If the ball is above the center of the paddle, the paddle will move up, and if the ball is below the center, the paddle will move down.
 
     computerPaddle.paddlePositionY += computerPaddle.velocity; // what makes the paddle move up and down
 
     function stayWithinFrame() {
-        if (computerPaddle.paddlePositionY < 0) { //if the paddle goes off the top of the board, set the paddle position to 0
-            computerPaddle.paddlePositionY = 0; //
+        if (computerPaddle.paddlePositionY < 0) { //if the paddle goes off the top of the board, set the paddle position to 0 
+            computerPaddle.paddlePositionY = 0; //set the paddle position to 0 (top of board)
         } else if (computerPaddle.paddlePositionY > maxPaddlePositionY) { //if the paddle goes off the bottom of the board
             computerPaddle.paddlePositionY = maxPaddlePositionY; //set the paddle position to (510)
         }
@@ -184,10 +187,18 @@ function resetBallToCenter() {
 // }
 
 //collision detection
-function checkCollisions() { //V2
+function checkCollisions() { 
     const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board
     const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
 
+    if (topBoundary || bottomBoundary) { //if the ball hits the top or bottom boundary
+        ball.velocityY = -ball.velocityY; //reverse the direction of the ball in the y axis
+        if (topBoundary) {
+            ball.ballY = ball.radius; // 
+        } else {
+            ball.ballY = board.height - ball.radius;
+        }
+    }
 
     const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
         ball.ballY >= leftPaddle.paddlePositionY &&
@@ -197,16 +208,7 @@ function checkCollisions() { //V2
         ball.ballY >= computerPaddle.paddlePositionY &&
         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
 
-    if (topBoundary || bottomBoundary) {
-        const bounce = ball.velocityY = -ball.velocityY; //reverse the direction of the ball in the y axis
-        if (topBoundary) {
-            ball.ballY = ball.radius; //
-        } else {
-            ball.ballY = board.height - ball.radius;
-        }
-    }
-
-    if (ballHitLeftPaddle || ballHitComputerPaddle) {
+    if (ballHitLeftPaddle || ballHitComputerPaddle) { //if the ball hits the left paddle or the right paddle
         ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3));
         ball.velocityY += (Math.random() * 2 - 3);
         ball.velocityX *= 1.02; //increase ball Xvelocity by 2%

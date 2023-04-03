@@ -5,7 +5,6 @@ board.width = 600;
 board.height = 600;
 board.style.backgroundColor = 'black';
 
-
 //0 represents the top left corner of the board. The x axis goes from left to right and the y axis goes from top to bottom. 
 //So the top left corner is 0, 0. The bottom right corner is 600, 600. The x axis goes from 0 to 600 and the y axis goes from 0 to 600
 
@@ -98,7 +97,7 @@ function moveComputerPaddle() {
             computerPaddle.velocity = 0;  //else, the paddle doesnt move
         }
     }
-    //velocityStrength andcompPaddleMovementVariationare multiplied to get the velocity and direction of the paddle's movement which will be added to the computerPaddle.velocity variable to create the random speed of the paddle
+    //velocityStrength and compPaddleMovementVariation are multiplied together to get the computerPaddle.velocity
 
     //the computer paddle's movement is relative to the center of the paddle (computerPaddle.height / 2). If the ball is above the center of the paddle, the paddle will move up, and if the ball is below the center, the paddle will move down.
 
@@ -157,62 +156,44 @@ function resetBallToCenter() {
     ball.velocityY = 0; // prevents the ball moving in the y direction
 }
 
-// function checkCollisions() {
-//     //ball and top/bottom boundaries
-//     if (ball.ballY - ball.radius <= 0) { // the 0 represents the top of the board. the radius is to represent 
-//         ball.velocityY = -ball.velocityY;
-//         ball.ballY = ball.radius;
-//     } else if (ball.ballY + ball.radius >= board.height) {
-//         ball.velocityY = -ball.velocityY;
-//         ball.ballY = board.height - ball.radius;
-//     }
-
-//     //check if the ball hits the left paddle or the right paddle (computer paddle)
-//     const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
-//         ball.ballY >= leftPaddle.paddlePositionY &&
-//         ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height;
-
-//     const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
-//         ball.ballY >= computerPaddle.paddlePositionY && // this makes sure the ball hits the paddle and not the board
-//         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
-
-//     if (ballHitLeftPaddle || ballHitComputerPaddle) { //
-//         ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3)); // add a random value between -3 and 3 to the velocity of the ball
-//         ball.velocityY = ball.velocityY + (Math.random() * 2 - 3); // add a random value between -3 and 3 to the velocity of the ball 
-
-//         // increase ball velocity by 2%
-//         ball.velocityX *= 1.02;
-//         ball.velocityY *= 1.02;
-//     }
-// }
-
 //collision detection
-function checkCollisions() { 
+function checkCollisions() {
     const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board
+
     const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
 
     if (topBoundary || bottomBoundary) { //if the ball hits the top or bottom boundary
         ball.velocityY = -ball.velocityY; //reverse the direction of the ball in the y axis
         if (topBoundary) {
-            ball.ballY = ball.radius; // 
+            ball.ballY = ball.radius;
         } else {
             ball.ballY = board.height - ball.radius;
         }
     }
 
-    const ballHitLeftPaddle = ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
+    const ballHitLeftPaddle =
+        ball.ballX - ball.radius <= leftPaddle.paddlePositionX + leftPaddle.width &&
         ball.ballY >= leftPaddle.paddlePositionY &&
         ball.ballY <= leftPaddle.paddlePositionY + leftPaddle.height;
 
-    const ballHitComputerPaddle = ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
+    // Check if the ball's left edge is to the left of the right edge of the left paddle
+    // Check if the top of the ball is above the bottom of the left paddle
+    // Check if the bottom of the ball is below the top of the left paddle
+
+    const ballHitComputerPaddle =
+        ball.ballX + ball.radius >= computerPaddle.paddlePositionX &&
         ball.ballY >= computerPaddle.paddlePositionY &&
         ball.ballY <= computerPaddle.paddlePositionY + computerPaddle.height;
 
-    if (ballHitLeftPaddle || ballHitComputerPaddle) { //if the ball hits the left paddle or the right paddle
-        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3));
+    // Check if the ball's right edge is to the right of the left edge of the right paddle
+    // Check if the top of the ball is above the bottom of the right paddle
+    // Check if the bottom of the ball is below the top of the right paddle
+
+    if (ballHitLeftPaddle || ballHitComputerPaddle) { //if the ball hits the left paddle or the right paddle 
+        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3)); //reverse the direction of the ball in the x axis and add a random number between -3 and 3 to the velocity
         ball.velocityY += (Math.random() * 2 - 3);
-        ball.velocityX *= 1.02; //increase ball Xvelocity by 2%
-        ball.velocityY *= 1.02; //increase ball Yvelocity by 2%
+        ball.velocityX *= 1.02; //increase ball X velocity by 2% with each hit
+        ball.velocityY *= 1.02; //increase ball Y velocity by 2% with each hit
     }
 }
 

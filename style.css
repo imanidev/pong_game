@@ -1,34 +1,36 @@
 body {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'courier';
     background-color: black;
     color: white;
+    display: flexbox;
+}
+
+h1 {
+    font-size: 40px;
+    margin: 10px 0;
+    text-align: center;
+    color: white
 }
 
 #board {
     display: flex;
     cursor: none;
-}
-
-h1 {
-    font-size: 30px;
-    margin: 10px 0;
-}
-
-
-#board {
-    border: 1px solid white;
+    margin: auto;
+    border: 2px solid white;
+    align-items: center;
+    justify-content: center;
 }
 
 .score-container {
-    justify-content: center;
+    display: flex;
     align-items: center;
-    margin: auto;
+    margin: 10px;
+    justify-content: space-between;
 }
 
 #player-score,
 #computer-score {
-    font-size: 15px;
-    margin: 0;
+    font-size: 20px;
 }
 
 #startbtn {
@@ -39,6 +41,7 @@ h1 {
     border: 2px solid white;
     padding: 5px;
     margin: 10px;
+    margin-left: 10px;
 }
 
 #resetbtn {
@@ -49,6 +52,7 @@ h1 {
     border: 2px solid white;
     padding: 5px;
     margin: 10px;
+    margin-left: 10px;
 }
 
 #resetbtn:hover {
@@ -65,19 +69,44 @@ h1 {
     border: 2px solid black;
 }
 
-/* .winner-loser-display {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: burlywood;
-    color: white;
-} */
 .winner-loser-display {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 20px;
-    font-size: 20px;
+    font-size: 70px;
+    text-align: center;
+    color: white;
+}
+
+.button-container {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.instructions {
+    position: absolute;
+    top: 60px;
+    right: 40px;
+    font-size: 18px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+
+#player-score {
+    order: 1;
+    position: absolute;
+    left: 10%;
+    top: 50%;
+}
+
+#computer-score {
+    order: 2;
+    position: absolute;
+    left: 80%;
+    top: 50%;
 }

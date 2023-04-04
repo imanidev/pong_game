@@ -35,7 +35,6 @@ The classic game of Pong.
   
 - The game uses an object-oriented approach where the game board, paddles and ball are all objects  with its own properties. This allows for more functionality to be added to the game in the future
 
-- 
   
 ## Unsolved Issues
 

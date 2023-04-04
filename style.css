@@ -1,37 +1,89 @@
 body {
     background-color: white;
     display: flex;
+}
 
+#board {
+    display: flex;
 }
 
 h1 {
     text-align: center;
     font-size: 50px;
     color: black;
-    margin: auto;
+    margin: 5 0px;
+
 }
 
 #board {
     background-color: black;
-    height: 500px;
-    width: 500px;
-
-    margin: auto;
+    display: flex;
+    margin: 50;
 }
 
 .score-container {
-
-    flex-direction: row;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: auto;
 }
 
-.button-container {
+/* .button-container {
 
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: auto;
+} */
+
+/* .score-container {
+
+    border: 2px solid black;
+    padding: 10px;
+
+} */
+
+#player-score {
+
+    font-size: 20px;
+    margin: 10px;
+}
+
+#computer-score {
+
+    font-size: 20px;
+    margin: 10px;
+}
+
+#startbtn {
+
+    background-color: black;
+    color: white;
+    font-size: 15px;
+    border: 2px solid white;
+    padding: 5px;
+    margin: 10px;
+}
+
+#resetbtn {
+
+    background-color: black;
+    color: white;
+    font-size: 15px;
+    border: 2px solid white;
+    padding: 5px;
+    margin: 10px;
+}
+
+#resetbtn:hover {
+
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+}
+
+#startbtn:hover {
+
+    background-color: white;
+    color: black;
+    border: 2px solid black;
 }

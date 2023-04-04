@@ -1,11 +1,11 @@
 # Pong Game
 
-A simple implementation of the classic game Pong.
+The classic game of Pong.
 
 ## Technologies Used
 
 - HTML
-- HTML5 Canvas
+- Canvas
 - CSS
 - JavaScript
 
@@ -25,7 +25,7 @@ A simple implementation of the classic game Pong.
 
 - The ball will bounce off the top and bottom walls. If it hits the left or right wall, the ball will reset back to the center of the board and the player will gain 1 point
 
-- The game ends when a player reaches 10 points
+- The game ends when either player reaches 10 points
 
 ## Approach Taken
 
@@ -33,7 +33,9 @@ A simple implementation of the classic game Pong.
   
 - The game logic is applied using JavaScript, with CSS used for styling
   
-- The game uses an object-oriented approach where the game board, paddles and ball are all objects  with their own properties. This allows for more functionality to be added to the game in the future if needed
+- The game uses an object-oriented approach where the game board, paddles and ball are all objects  with its own properties. This allows for more functionality to be added to the game in the future
+
+- 
   
 ## Unsolved Issues
 
@@ -41,17 +43,13 @@ A simple implementation of the classic game Pong.
 
 - The computer paddle at times will appear to be "stuck" to the top of the board
 
-- The computer paddle get "shaky" when moving up and down the board
-
-- Due to the random velocities set for the ball, the ball will move very slowly when it hits the paddle
+- Due to the random velocities set for the ball, it can move very slowly at times when it hits the paddle
   
 ## Future Features
 - Add sound effects to the game
-- Create high score board
-- Add classic terminal theme
- 
- 
- 
+- Create a high score board
+- Add light/dark mode
+
   --- 
-  #### **Appreciation**
-  Thanks Jenna for your helpful suggestions towards the game. I really appreciate it!
+  #### **Special Thanks**
+  Thank you Jenna and Christian for your helpful suggestions towards the game. I really appreciate it!

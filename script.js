@@ -83,12 +83,12 @@ function moveBall() {
 }
 
 //move computer paddle
-let velocityStrength = 1;
-let compPaddleMovementVariation = 1;
+let velocityStrength = 3;
+let compPaddleMovementVariation = 3;
+// 3 = base speed
+
 function moveComputerPaddle() {
-
-
-    const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
+    const maxPaddlePositionY = board.height - computerPaddle.height; //maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. ensures paddle doesnt go off board
 
     function moveUpOrDown() {
         if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2 - 10) { //ball is above the center of the paddle
@@ -182,8 +182,7 @@ function checkCollisions() {
 
     if (ballHitLeftPaddle || ballHitComputerPaddle) { //if the ball hits the left paddle or the right paddle 
         ball.velocityX = - (ball.velocityX + (Math.random() * 3 - 3));
-        //reverse the direction of the ball in the x axis and add a random number between -2 and 2 to the velocityX
-        ball.velocityY += (Math.random() * 3 - 3); //add a random number between -2 and 2 to the velocityY
+        ball.velocityY += (Math.random() * 3 - 3);
         velocityStrength = Math.floor(Math.random() * 3) + 2;
         compPaddleMovementVariation = Math.random() * 1 + 0.5;
         ball.velocityX *= 1.02; //increase ball X velocity by 2% per hit

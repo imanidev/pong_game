@@ -14,9 +14,10 @@ const ball = {
     radius: 10,
     ballX: board.width / 2, // x position of ball
     ballY: board.height / 2, // y position of ball
-    velocityX: 3, // speed of ball in x direction
-    velocityY: 3 // speed of ball in y direction
-};
+    velocityX: 3,
+    velocityY: 3
+    // 3 = base speed
+};                     
 
 //left paddle object
 const leftPaddle = {
@@ -32,9 +33,9 @@ const computerPaddle = {
     color: 'white',
     width: 10,
     height: 90,
-    paddlePositionX: board.width - 20, // 20 because the width of the paddle is 10. to be at the right edge of the board, subtract an additional 10 from the width of the board
+    paddlePositionX: board.width - 20, // 20 because the width of the paddle is 10. so to be 10px away from the board, subtract an additional 10 
     paddlePositionY: board.height / 2 - 45, // center of paddle
-    velocity: 3 // base speed 
+    velocity: null //made null for now. will be set to a number later
 };
 
 //Since the width and height of the board is 600px. Divide it by 2 to get the center of the board
@@ -83,8 +84,8 @@ function moveBall() {
 
 //move computer paddle
 function moveComputerPaddle() {
-    const velocityStrength = Math.floor(Math.random() * 3) + 1; // random number between 1 and 3
-    const compPaddleMovementVariation = Math.random() * 1 + 0.5; // random number between 0.5 and 1
+    const velocityStrength = Math.floor(Math.random() * 3) + 0.5; // random numbers between 0.5 and 3   
+    const compPaddleMovementVariation = Math.random() * 1.5 + 0.5; // random numbers between 0.5 and 1.5
 
     const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
 
@@ -124,7 +125,7 @@ function startGame() {
         moveComputerPaddle();
         increaseScore();
         checkCollisions();
-    }, 1000 / 70); // 70 fps
+    }, 1000 / 60); // 60 fps
 }
 
 //restart game
@@ -158,7 +159,7 @@ function resetBallToCenter() {
 
 //collision detection
 function checkCollisions() {
-    const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board
+    const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board. the ball's y position is subtracted by the radius of the ball. if the ball's y position is less than or equal to 0, then the ball has hit the top boundary
 
     const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
 
@@ -190,10 +191,11 @@ function checkCollisions() {
     // Check if the bottom of the ball is below the top of the right paddle
 
     if (ballHitLeftPaddle || ballHitComputerPaddle) { //if the ball hits the left paddle or the right paddle 
-        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 3)); //reverse the direction of the ball in the x axis and add a random number between -3 and 3 to the velocity
-        ball.velocityY += (Math.random() * 2 - 3);
-        ball.velocityX *= 1.02; //increase ball X velocity by 2% with each hit
-        ball.velocityY *= 1.02; //increase ball Y velocity by 2% with each hit
+        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 2));
+        //reverse the direction of the ball in the x axis and add a random number between -2 and 2 to the velocityX
+        ball.velocityY += (Math.random() * 2 - 2); //add a random number between -2 and 2 to the velocityY
+        ball.velocityX *= 1.02; //increase ball X velocity by 2% per hit
+        ball.velocityY *= 1.02; //increase ball Y velocity by 2% per hit
     }
 }
 

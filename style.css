@@ -1,24 +1,22 @@
 body {
-    background-color: white;
-    display: flex;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: black;
+    color: white;
 }
 
 #board {
     display: flex;
+    cursor: none;
 }
 
 h1 {
-    text-align: center;
-    font-size: 50px;
-    color: black;
-    margin: 5 0px;
-
+    font-size: 30px;
+    margin: 10px 0;
 }
 
+
 #board {
-    background-color: black;
-    display: flex;
-    margin: 50;
+    border: 1px solid white;
 }
 
 .score-container {
@@ -27,31 +25,10 @@ h1 {
     margin: auto;
 }
 
-/* .button-container {
-
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-} */
-
-/* .score-container {
-
-    border: 2px solid black;
-    padding: 10px;
-
-} */
-
-#player-score {
-
-    font-size: 20px;
-    margin: 10px;
-}
-
+#player-score,
 #computer-score {
-
-    font-size: 20px;
-    margin: 10px;
+    font-size: 15px;
+    margin: 0;
 }
 
 #startbtn {
@@ -86,4 +63,21 @@ h1 {
     background-color: white;
     color: black;
     border: 2px solid black;
+}
+
+/* .winner-loser-display {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: burlywood;
+    color: white;
+} */
+.winner-loser-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    font-size: 20px;
 }

@@ -83,16 +83,17 @@ function moveBall() {
 }
 
 //move computer paddle
+let velocityStrength = 1;
+let compPaddleMovementVariation = 1;
 function moveComputerPaddle() {
-    const velocityStrength = Math.floor(Math.random() * 3) + 2; // random numbers between 2 and 4
-    const compPaddleMovementVariation = Math.random() * 1 + 0.5; // random numbers between 0.5 and 1.5
+
 
     const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
 
     function moveUpOrDown() {
-        if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2) { //ball is above the center of the paddle
+        if (ball.ballY < computerPaddle.paddlePositionY + computerPaddle.height / 2 - 10) { //ball is above the center of the paddle
             computerPaddle.velocity = -velocityStrength * compPaddleMovementVariation; // negative sign moves the paddle up. *rocket ship analogy* 
-        } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2) { //ball is below the center of the paddle   
+        } else if (ball.ballY > computerPaddle.paddlePositionY + computerPaddle.height / 2 + 10) { //ball is below the center of the paddle   
             computerPaddle.velocity = velocityStrength * compPaddleMovementVariation; // moves the paddle down. the positive sign is to move the paddle down
         } else {
             computerPaddle.velocity = 0;  //else, the paddle doesnt move
@@ -183,6 +184,8 @@ function checkCollisions() {
         ball.velocityX = - (ball.velocityX + (Math.random() * 3 - 3));
         //reverse the direction of the ball in the x axis and add a random number between -2 and 2 to the velocityX
         ball.velocityY += (Math.random() * 3 - 3); //add a random number between -2 and 2 to the velocityY
+        velocityStrength = Math.floor(Math.random() * 3) + 2;
+        compPaddleMovementVariation = Math.random() * 1 + 0.5;
         ball.velocityX *= 1.02; //increase ball X velocity by 2% per hit
         ball.velocityY *= 1.02; //increase ball Y velocity by 2% per hit
     }

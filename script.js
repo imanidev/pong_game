@@ -14,10 +14,10 @@ const ball = {
     radius: 10,
     ballX: board.width / 2, // x position of ball
     ballY: board.height / 2, // y position of ball
-    velocityX: 3,
-    velocityY: 3
+    velocityX: 5,
+    velocityY: 5
     // 3 = base speed
-};                     
+};
 
 //left paddle object
 const leftPaddle = {
@@ -84,8 +84,8 @@ function moveBall() {
 
 //move computer paddle
 function moveComputerPaddle() {
-    const velocityStrength = Math.floor(Math.random() * 3) + 0.5; // random numbers between 0.5 and 3   
-    const compPaddleMovementVariation = Math.random() * 1.5 + 0.5; // random numbers between 0.5 and 1.5
+    const velocityStrength = Math.floor(Math.random() * 3) + 2; // random numbers between 2 and 4
+    const compPaddleMovementVariation = Math.random() * 1 + 0.5; // random numbers between 0.5 and 1.5
 
     const maxPaddlePositionY = board.height - computerPaddle.height; // the maximum position of the paddle in the y direction. subtracts the height of the paddle (90) from the height of the board (600). so the paddle only goes to a maximum of 510px. this is so the computer paddle doesnt go off the board
 
@@ -130,18 +130,7 @@ function startGame() {
 
 //restart game
 function resetGame() {
-    clearInterval(gameInterval); //clears the game
-    // ball.ballY = board.height / 2;
-    // ball.velocityX = 2;
-    // ball.velocityY = 2;
-    // leftPaddle.paddlePositionY = board.height / 2 - 45;
-    // computerPaddle.paddlePositionY = board.height / 2 - 45;
-    // leftPaddle.paddlePositionX = 10;
-    // computerPaddle.paddlePositionX = board.width - 20;
-    // document.querySelector('#player-score').textContent = 'Player: 0';
-    // document.querySelector('#computer-score').textContent = 'Computer: 0';
-    // document.body.removeChild(messageEl)
-
+    clearInterval(gameInterval); //clears the game interval
     // reload page
     function reloadPage() {
         location.reload(); //this reloads the page based on the current url
@@ -191,9 +180,9 @@ function checkCollisions() {
     // Check if the bottom of the ball is below the top of the right paddle
 
     if (ballHitLeftPaddle || ballHitComputerPaddle) { //if the ball hits the left paddle or the right paddle 
-        ball.velocityX = - (ball.velocityX + (Math.random() * 2 - 2));
+        ball.velocityX = - (ball.velocityX + (Math.random() * 3 - 3));
         //reverse the direction of the ball in the x axis and add a random number between -2 and 2 to the velocityX
-        ball.velocityY += (Math.random() * 2 - 2); //add a random number between -2 and 2 to the velocityY
+        ball.velocityY += (Math.random() * 3 - 3); //add a random number between -2 and 2 to the velocityY
         ball.velocityX *= 1.02; //increase ball X velocity by 2% per hit
         ball.velocityY *= 1.02; //increase ball Y velocity by 2% per hit
     }
@@ -214,32 +203,33 @@ function increaseScore() {
         document.querySelector('#computer-score').textContent = `Computer: ${computerScore}`;
         resetBallToCenter();
         if (computerScore >= 10) {
-            whoWins('Computer');
+            winOrLose('Computer');
         }
     } else if (rightPaddleScore) {
         playerScore++;
         document.querySelector('#player-score').textContent = `Player: ${playerScore}`;
         resetBallToCenter();
         if (playerScore >= 10) {
-            whoWins('Player');
+            winOrLose('Player');
         }
     }
 }
 
 //show win or lose message
-function whoWins(winner) {
-    let winnerMessage; // holds the message to be displayed
+function winOrLose(winner) {
+    let winnerMessage = ''; // holds the message to be displayed
     if (winner === 'Player') {
         winnerMessage = 'You win!';
     } else if (winner === 'Computer') {
-        winnerMessage = 'Computer Wins!';
+        winnerMessage = 'You Lose!';
     }
 
     const messageEl = document.createElement('h1');
     messageEl.textContent = winnerMessage;
-    document.querySelector('.winner-display').appendChild(messageEl);
+    document.querySelector('.winner-loser-display').appendChild(messageEl);
     resetGame();
 }
+
 
 //event listeners
 const startButton = document.querySelector('#startbtn');

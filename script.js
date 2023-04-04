@@ -14,9 +14,9 @@ const ball = {
     radius: 10,
     ballX: board.width / 2, // x position of ball
     ballY: board.height / 2, // y position of ball
-    velocityX: 5,
-    velocityY: 5
-    // 3 = base speed
+    velocityX: 4,
+    velocityY: 4
+    //4 = base speed
 };
 
 //left paddle object
@@ -154,7 +154,7 @@ function checkCollisions() {
     const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
 
     if (topBoundary || bottomBoundary) { //if the ball hits the top or bottom boundary
-        ball.velocityY = -ball.velocityY; //reverse the direction of the ball in the y axis
+        ball.velocityY = - ball.velocityY; //reverse the direction of the ball in the y axis
         if (topBoundary) {
             ball.ballY = ball.radius;
         } else {

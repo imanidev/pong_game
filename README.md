@@ -19,7 +19,6 @@ A simple implementation of the classic game Pong.
 
 - You can go to the live demo at [here](https://imanidev.github.io/pong_game/) to play the game
 
-
 ## How to Play
 
 - Move your mouse to control the paddle
@@ -43,4 +42,16 @@ A simple implementation of the classic game Pong.
 - The computer paddle at times will appear to be "stuck" to the top of the board
 
 - The computer paddle get "shaky" when moving up and down the board
+
+- Due to the random velocities set for the ball, the ball will move very slowly when it hits the paddle
   
+## Future Features
+- Add sound effects to the game
+- Create high score board
+- Add classic terminal theme
+ 
+ 
+ 
+  --- 
+  #### **Appreciation**
+  Thanks Jenna for your helpful suggestions towards the game. I really appreciate it!

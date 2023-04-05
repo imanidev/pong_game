@@ -14,9 +14,9 @@ const ball = {
     radius: 10,
     ballX: board.width / 2, // x position of ball
     ballY: board.height / 2, // y position of ball
-    velocityX: 4,
-    velocityY: 4
-    //4 = base speed
+    velocityX: 5,
+    velocityY: 5
+    //5 = base speed
 };
 
 //left paddle object
@@ -149,7 +149,7 @@ function resetBallToCenter() {
 
 //collision detection
 function checkCollisions() {
-    const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board. the ball's y position is subtracted by the radius of the ball. if the ball's y position is less than or equal to 0, then the ball has hit the top boundary
+    const topBoundary = ball.ballY - ball.radius <= 0; // this is the top of the board. the ball's y position is subtracted by the radius of the ball. if the ball's y position is <= 0, then the ball has hit the top boundary
 
     const bottomBoundary = ball.ballY + ball.radius >= board.height; // this is the bottom of the board
 
@@ -219,7 +219,7 @@ function increaseScore() {
 
 //show win or lose message
 function winOrLose(winner) {
-    let winnerMessage = ''; // holds the message to be displayed
+    let winnerMessage;
     if (winner === 'Player') {
         winnerMessage = 'You win!';
     } else if (winner === 'Computer') {
